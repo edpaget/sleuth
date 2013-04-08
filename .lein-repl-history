@@ -1,0 +1,12 @@
+(require 'sleuth.test.definitions :reload-all)
+(require '[monger.collection :as mc])
+(use 'monger.core)
+(require '[monger.collection :as mc])
+(sleuth.defintions/create! {:site "stuff" :test "test"})
+(require 'sleuth.defintions)
+(require 'sleuth.defintions :reload)
+(sleuth.defintions/create! {:site "stuff" :test "test"})
+sleuth
+(keys {:_id stuff})
+(keys {:_id "stuff"})
+(-> {:_id "stuff"} keys first)
