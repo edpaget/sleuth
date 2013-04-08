@@ -55,7 +55,10 @@
                            :project project 
                            :user-id user-id})]
     (if (v/valid? valid-definition record)
-      (mc/save-and-return "defintions" (merge record {:page-ids (into [] (map :_id (create-or-update-pages! pages)))}))
+      (mc/save-and-return "defintions" (merge record {:page-ids (->> pages
+                                                                     create-or-update-pages!
+                                                                     (map :_id)
+                                                                     (into []))}))
       {})))
 
 (defn respond-with
