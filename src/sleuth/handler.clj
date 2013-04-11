@@ -1,18 +1,26 @@
 (ns sleuth.handler
   (:use compojure.core
         ring.middleware.edn
-        monger.core)
+        ring.middleware.json)
   (:require [compojure.handler :as handler]
             [compojure.route :as route]
-            [sleuth.definitions :as d]))
+            [sleuth.definitions :as d]
+            [monger.core :as m]))
 
-(connect!)
-(set-db! (use-db "sleuth-dev"))
+(m/connect!)
+(m/set-db! (m/get-db "sleuth-dev"))
+
+(defn wrap-user-info
+  [handler]
+
+  )
 
 (defroutes app-routes
-  (GET "/" [] "Hello World")
-  (context "/defintions" [] d/definitions)
+  (context "/definitions" [] d/definitions)
+  (route/resources "/")
   (route/not-found "Not Found"))
 
 (def app (-> app-routes
-             wrap-edn-params))
+             wrap-edn-params
+             wrap-json-params
+             wrap-json-response))

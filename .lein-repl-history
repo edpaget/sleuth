@@ -10,3 +10,4 @@ sleuth
 (keys {:_id stuff})
 (keys {:_id "stuff"})
 (-> {:_id "stuff"} keys first)
+(merge {:test 1} {:test nil})

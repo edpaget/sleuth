@@ -4,9 +4,19 @@
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [compojure "1.1.5"]
                  [ring-edn "0.1.0"]
+                 [ring/ring-json "0.2.0"]
                  [com.novemberain/monger "1.5.0"]
-                 [clj-time "0.5.0"]]
-  :plugins [[lein-ring "0.8.2"]]
+                 [clj-time "0.5.0"]
+                 [prismatic/dommy "0.1.0"]]
+  :plugins [[lein-cljsbuild "0.3.0"]
+            [lein-ring "0.8.2"]]
+  :cljsbuild {
+              :builds [{
+                        :source-paths ["src-cljs"]
+                        :compiler {
+                                   :output-to "resources/public/javascripts/app.js"
+                                   :optimizations :whitespace
+                                   :pretty-print true}}]}
   :ring {:handler sleuth.handler/app}
   :profiles
   {:dev {:dependencies [[ring-mock "0.1.3"]]}})
