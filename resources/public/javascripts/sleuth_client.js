@@ -1,75 +1,51 @@
 (function() {
-  var $ = window.jQuery
-  var eventsLog = []
-  if ((typeof require != 'undefined') && (typeof define == 'undefined')) {
-    var User = require('zooniverse/lib/modles/user');
-  }
+  var events = {log: []}
+  if ((typeof require != 'undefined') && (typeof define == 'undefined'))
+    var user = require('zooniverse/lib/modles/user');
+  else
+    var user = {current: {id: ""}};
 
-  function init(site, key, jQuery) {
-    if (typeof jQuery != 'undefined')
-      $ = jQuery;
-    this.site = site
-    this.key = key
+  function send(auth, data) {
+    var xhr = new XMLHttpRequest();
 
-    definitions = $.ajax('http://localhost:3000/define/' + site, {
-      crossDomain: true,
-      beforeSend: function(xhr) {
-        var auth = btoa(site + ":" + key);
-        xhr.setRequestHeader('Authorization', "Basic " + auth);
+    xhr.onload = function() {
+      if (xhr.status == 201) {
+        timeout = parseInt(xhr.resposne);
+        setTimeout(5000, postLog);
+      } else {
+        throw new Error("Failed to Post to Server");
       }
-    });
-    defintions.done(setHandlers);
-  }
-
-  function setHandlers(defintions) {
-    this.pages = definitions.pages;
-    this.sessionId = definintions.sessionId
-    $(window).on 'hashchange', loadPageEvents();
-    loadPageEvents();
-  }
-
-  function loadPageEvents() {
-    var hash = location.hash
-
-    if (typeof this.events != 'undefined') {
-      for (var event in this.events) {
-        remove(event);
-      }
+    };
+    xhr.open("POST", "/events", true);
+    xhr.setRequestHeader("Content-Type", "applicaiton/json");
+    if (typeof auth == 'object') {
+      authStr = bota(auth.site + ":" + auth.site_key);
+      xhr.setRequestHeader("Authorization", "Basic " + authStr);
     }
-
-    for(var page in this.pages) {
-      pageRegex = new RegExp(page.hash);
-      if (hash.match(pageRegex) != null)
-        this.events = page.events;
-    }
-
-    for (var event in this.events) {
-      register(event);
-    }
+    xhr.send(JSON.stringify(data));
   }
 
-  function register(event) {
-    $(document).on(event.type, event.selector, logEvent(event.properties));
-  }
-
-  function remove(event) {
-    $(document).off(event.type, event.selector);
-  }
-
-  function logEvent(properties) {
-    return(function(ev) {
-      eventsLog.push({
-        type: ev.type,
-        page: location.hash,
-        pageX: ev.pageX,
-        pageY: ev.pageY,
-        time: new Date(),
-        project: location.hostname,
-        value: ev.target.value,
-        dataset: ev.target.dataset,
-        "class": ev.target.class,
-        id: ev.target.id
-      });
+  function logEvent(e) {
+    events.log.push({
+      tag: e.target.tagName,
+      idName: e.target.id,
+      className: e.target.className,
+      position: { x: e.clientX, y: e.clientY},
+      user: user.current.id,
+      value: e.target.value,
+      dataset: e.target.dataset
     });
   }
+
+  function postLog(auth, data) {
+    send(auth, data);
+    eventsLog = [];
+  }
+
+  function init(site, key) {
+    var auth = {site: site, key: key};
+    document.addEventListener("click", logEvent, true);
+    setTimeout(5000, postLog, auth, data);
+  }
+
 }).call(this);

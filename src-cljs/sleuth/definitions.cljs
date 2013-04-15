@@ -12,8 +12,8 @@
    [:input {:type "text" :name "selector"} (str selector)]])
 
 (defn page-template
-  [& {:keys [page-regex title events]}]
-  [:div.page
+  [& {:keys [_id page-regex title events]}]
+  [:div.page {:data-id (str _id)}
    [:input {:type "text" :name "regex"} (str page-regex)]
    [:input {:type "text" :name "title"} (str title)]
    (map event-template events)
@@ -42,23 +42,21 @@
    (defintions-list-template definitions)
    (if (nil? active) 
      (definition-template)
-     (definition-template (first (filter #(= active (:_id %)) 
-                                         definitions))))])
+     (definition-template active))])
 
+(def defintions (atom {}))
+(def active (atom {}))
+ 
 (defn xhr-to-edn 
   [f]
   (fn [e] (let [response (-> (.-target e)
                              .getResponseText
-                             clojure.den/readString)]
+                             clojure.edn/readString)]
             (f response))))
 
-(defn switch-active
-  [e]
-  (let [id (-> e .-target .-dataset .-id)]
-    (fetch id)))
-
 (defn data-from-form
-  (let []))
+  []
+  ("data!"))
 
 (defn add-page
   [e]
@@ -70,7 +68,11 @@
 
 (defn submit
   [e]
-  (xhr/send url nil (data-from-form)))
+  (if (not (nil? active))
+    (let [url (str "/definitions/" (:_id active))]
+      (xhr/send url (xhr-to-edn set-active) "PUT" (data-from-form)))
+    (let [url "/definitions"]
+      (xhr/send url (xhr-to-edn set-active "POST" (data-from-form))))))
 
 (defn render-page!
   [defintions]
@@ -85,10 +87,34 @@
   (dommy/replace! [:div.definition] (definition-template definition)))
 
 (defn fetch
-  []
+  ([]
   (let [url "/definitions"]
-    (xhr/send url (xhr-to-edn render-page!) "GET"))
-  [id]
+    (xhr/send url (xhr-to-edn set-definitions) "GET")))
+  ([id]
   (let [url (str "/defintions/" id)]
-    (xhr/send url (xhr-to-edn render-active!) "GET")))
+    (xhr/send url (xhr-to-edn set-active) "GET"))))
+ 
+(defn initialize
+  []
+  (add-watch definitions 
+             (fn [key a old-val new-val] 
+               (if (not (= old-val new-val))
+                 (render-page! new-val))))
+  (add-watch active 
+             (fn [key a old-val new-val]
+               (if (not (= old-val new-val))
+                 (render-active! new-val))))
+  (fetch))
+ 
+(defn set-definitions
+  [defs]
+  (swap! definitions defs))
 
+(defn set-active
+  [act]
+  (swap! active act))
+
+(defn switch-active
+  [e]
+  (let [id (-> e .-target .-id)]
+    (fetch id)))

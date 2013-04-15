@@ -7,6 +7,7 @@
                  [ring/ring-json "0.2.0"]
                  [com.novemberain/monger "1.5.0"]
                  [clj-time "0.5.0"]
+                 [org.clojure/data.codec "0.1.0"]
                  [prismatic/dommy "0.1.0"]]
   :plugins [[lein-cljsbuild "0.3.0"]
             [lein-ring "0.8.2"]]
