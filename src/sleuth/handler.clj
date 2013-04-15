@@ -4,19 +4,17 @@
         ring.middleware.json)
   (:require [compojure.handler :as handler]
             [compojure.route :as route]
-            [sleuth.definitions :as d]
+            [sleuth.auth :as auth] 
             [monger.core :as m]))
 
 (m/connect!)
 (m/set-db! (m/get-db "sleuth-dev"))
 
 (defn wrap-user-info
-  [handler]
-
-  )
+  [handler])
 
 (defroutes app-routes
-  (context "/definitions" [] d/definitions)
+  (context "/auth" [] auth/auth-routes)
   (route/resources "/")
   (route/not-found "Not Found"))
 

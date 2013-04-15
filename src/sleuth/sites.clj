@@ -13,7 +13,7 @@
   [{:keys [user site]}]
   (let [id (ObjectId.)]
     (mc/save "sites" (merge {_id: id} site))
-    (user/update-sites (:_id user) id)))
+    (user/update-sites user id)))
 
 (defn delete!
   [id]

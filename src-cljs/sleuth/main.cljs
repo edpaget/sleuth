@@ -1,4 +1,6 @@
 (ns sleuth.main
-  (:require [sleuth.defintions :as def]))
+  (:require [sleuth.auth :as auth]))
 
-(def/initialize)
+(def user (atom {}))
+
+(auth/initialize :li.auth user)
