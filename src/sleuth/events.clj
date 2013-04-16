@@ -1,6 +1,6 @@
 (ns sleuth.events
   (:use compojure.core)
-  (:require [monger.collections :as mc])
+  (:require [monger.collection :as mc])
   (:import [org.bson.types ObjectId]))
 
 (defn create!

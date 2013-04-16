@@ -25512,111 +25512,111 @@ sleuth.xhr.xhr_to_edn = function xhr_to_edn(f) {
     }
   }
 };
-sleuth.xhr.auth = function auth(p__10008) {
-  var map__10010 = p__10008;
-  var map__10010__$1 = cljs.core.seq_QMARK_.call(null, map__10010) ? cljs.core.apply.call(null, cljs.core.hash_map, map__10010) : map__10010;
-  var token = cljs.core._lookup.call(null, map__10010__$1, "\ufdd0'token", null);
-  var name = cljs.core._lookup.call(null, map__10010__$1, "\ufdd0'name", null);
+sleuth.xhr.auth = function auth(p__20342) {
+  var map__20344 = p__20342;
+  var map__20344__$1 = cljs.core.seq_QMARK_.call(null, map__20344) ? cljs.core.apply.call(null, cljs.core.hash_map, map__20344) : map__20344;
+  var token = cljs.core._lookup.call(null, map__20344__$1, "\ufdd0'token", null);
+  var name = cljs.core._lookup.call(null, map__20344__$1, "\ufdd0'name", null);
   return btoa([cljs.core.str("Basic "), cljs.core.str(name), cljs.core.str(":"), cljs.core.str(token)].join(""))
 };
 sleuth.xhr.post_or_put = function() {
-  var post_or_put__delegate = function(url, data, method, p__10011) {
-    var vec__10013 = p__10011;
-    var user = cljs.core.nth.call(null, vec__10013, 0, null);
-    var callback = cljs.core.nth.call(null, vec__10013, 1, null);
-    var headers = cljs.core.PersistentVector.fromArray(["Content-Type", "applicaiton/edn"], true);
-    var headers__$1 = !(user == null) ? cljs.core.into.call(null, cljs.core.PersistentVector.EMPTY, cljs.core.concat.call(null, headers, cljs.core.PersistentVector.fromArray(["Authorization", sleuth.xhr.auth.call(null, user)], true))) : null;
+  var post_or_put__delegate = function(url, data, method, p__20345) {
+    var vec__20347 = p__20345;
+    var user = cljs.core.nth.call(null, vec__20347, 0, null);
+    var callback = cljs.core.nth.call(null, vec__20347, 1, null);
+    var headers = cljs.core.PersistentVector.fromArray(["Content-Type", "application/edn"], true);
+    var headers__$1 = !(user == null) ? cljs.core.into.call(null, cljs.core.PersistentVector.EMPTY, cljs.core.concat.call(null, headers, cljs.core.PersistentVector.fromArray(["Authorization", sleuth.xhr.auth.call(null, user)], true))) : headers;
     var edn_data = cljs.core.pr_str.call(null, data);
     return goog.net.XhrIo.send(url, sleuth.xhr.xhr_to_edn.call(null, callback), method, edn_data, cljs.core.apply.call(null, cljs.core.js_obj, headers__$1))
   };
   var post_or_put = function(url, data, method, var_args) {
-    var p__10011 = null;
+    var p__20345 = null;
     if(goog.isDef(var_args)) {
-      p__10011 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 3), 0)
+      p__20345 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 3), 0)
     }
-    return post_or_put__delegate.call(this, url, data, method, p__10011)
+    return post_or_put__delegate.call(this, url, data, method, p__20345)
   };
   post_or_put.cljs$lang$maxFixedArity = 3;
-  post_or_put.cljs$lang$applyTo = function(arglist__10014) {
-    var url = cljs.core.first(arglist__10014);
-    var data = cljs.core.first(cljs.core.next(arglist__10014));
-    var method = cljs.core.first(cljs.core.next(cljs.core.next(arglist__10014)));
-    var p__10011 = cljs.core.rest(cljs.core.next(cljs.core.next(arglist__10014)));
-    return post_or_put__delegate(url, data, method, p__10011)
+  post_or_put.cljs$lang$applyTo = function(arglist__20348) {
+    var url = cljs.core.first(arglist__20348);
+    var data = cljs.core.first(cljs.core.next(arglist__20348));
+    var method = cljs.core.first(cljs.core.next(cljs.core.next(arglist__20348)));
+    var p__20345 = cljs.core.rest(cljs.core.next(cljs.core.next(arglist__20348)));
+    return post_or_put__delegate(url, data, method, p__20345)
   };
   post_or_put.cljs$lang$arity$variadic = post_or_put__delegate;
   return post_or_put
 }();
 sleuth.xhr.post = function() {
-  var post__delegate = function(url, data, p__10015) {
-    var vec__10017 = p__10015;
-    var user = cljs.core.nth.call(null, vec__10017, 0, null);
-    var callback = cljs.core.nth.call(null, vec__10017, 1, null);
+  var post__delegate = function(url, data, p__20349) {
+    var vec__20351 = p__20349;
+    var user = cljs.core.nth.call(null, vec__20351, 0, null);
+    var callback = cljs.core.nth.call(null, vec__20351, 1, null);
     return sleuth.xhr.post_or_put.call(null, url, data, "POST", user, callback)
   };
   var post = function(url, data, var_args) {
-    var p__10015 = null;
+    var p__20349 = null;
     if(goog.isDef(var_args)) {
-      p__10015 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
+      p__20349 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
     }
-    return post__delegate.call(this, url, data, p__10015)
+    return post__delegate.call(this, url, data, p__20349)
   };
   post.cljs$lang$maxFixedArity = 2;
-  post.cljs$lang$applyTo = function(arglist__10018) {
-    var url = cljs.core.first(arglist__10018);
-    var data = cljs.core.first(cljs.core.next(arglist__10018));
-    var p__10015 = cljs.core.rest(cljs.core.next(arglist__10018));
-    return post__delegate(url, data, p__10015)
+  post.cljs$lang$applyTo = function(arglist__20352) {
+    var url = cljs.core.first(arglist__20352);
+    var data = cljs.core.first(cljs.core.next(arglist__20352));
+    var p__20349 = cljs.core.rest(cljs.core.next(arglist__20352));
+    return post__delegate(url, data, p__20349)
   };
   post.cljs$lang$arity$variadic = post__delegate;
   return post
 }();
 sleuth.xhr.put = function() {
-  var put__delegate = function(url, data, p__10019) {
-    var vec__10021 = p__10019;
-    var user = cljs.core.nth.call(null, vec__10021, 0, null);
-    var callback = cljs.core.nth.call(null, vec__10021, 1, null);
+  var put__delegate = function(url, data, p__20353) {
+    var vec__20355 = p__20353;
+    var user = cljs.core.nth.call(null, vec__20355, 0, null);
+    var callback = cljs.core.nth.call(null, vec__20355, 1, null);
     return sleuth.xhr.post_or_put.call(null, url, data, "PUT", user, callback)
   };
   var put = function(url, data, var_args) {
-    var p__10019 = null;
+    var p__20353 = null;
     if(goog.isDef(var_args)) {
-      p__10019 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
+      p__20353 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
     }
-    return put__delegate.call(this, url, data, p__10019)
+    return put__delegate.call(this, url, data, p__20353)
   };
   put.cljs$lang$maxFixedArity = 2;
-  put.cljs$lang$applyTo = function(arglist__10022) {
-    var url = cljs.core.first(arglist__10022);
-    var data = cljs.core.first(cljs.core.next(arglist__10022));
-    var p__10019 = cljs.core.rest(cljs.core.next(arglist__10022));
-    return put__delegate(url, data, p__10019)
+  put.cljs$lang$applyTo = function(arglist__20356) {
+    var url = cljs.core.first(arglist__20356);
+    var data = cljs.core.first(cljs.core.next(arglist__20356));
+    var p__20353 = cljs.core.rest(cljs.core.next(arglist__20356));
+    return put__delegate(url, data, p__20353)
   };
   put.cljs$lang$arity$variadic = put__delegate;
   return put
 }();
 sleuth.xhr.get = function() {
-  var get__delegate = function(url, user, p__10023) {
-    var vec__10025 = p__10023;
-    var data = cljs.core.nth.call(null, vec__10025, 0, null);
-    var callback = cljs.core.nth.call(null, vec__10025, 1, null);
+  var get__delegate = function(url, user, p__20357) {
+    var vec__20359 = p__20357;
+    var data = cljs.core.nth.call(null, vec__20359, 0, null);
+    var callback = cljs.core.nth.call(null, vec__20359, 1, null);
     var headers = {"Content-Type":"application/edn", "Authorization":sleuth.xhr.auth.call(null, user)};
     var edn_data = !(data == null) ? cljs.core.pr_str.call(null, data) : "";
     return goog.net.XhrIo.send(url, sleuth.xhr.xhr_to_edn.call(null, callback), "GET", edn_data, headers)
   };
   var get = function(url, user, var_args) {
-    var p__10023 = null;
+    var p__20357 = null;
     if(goog.isDef(var_args)) {
-      p__10023 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
+      p__20357 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
     }
-    return get__delegate.call(this, url, user, p__10023)
+    return get__delegate.call(this, url, user, p__20357)
   };
   get.cljs$lang$maxFixedArity = 2;
-  get.cljs$lang$applyTo = function(arglist__10026) {
-    var url = cljs.core.first(arglist__10026);
-    var user = cljs.core.first(cljs.core.next(arglist__10026));
-    var p__10023 = cljs.core.rest(cljs.core.next(arglist__10026));
-    return get__delegate(url, user, p__10023)
+  get.cljs$lang$applyTo = function(arglist__20360) {
+    var url = cljs.core.first(arglist__20360);
+    var user = cljs.core.first(cljs.core.next(arglist__20360));
+    var p__20357 = cljs.core.rest(cljs.core.next(arglist__20360));
+    return get__delegate(url, user, p__20357)
   };
   get.cljs$lang$arity$variadic = get__delegate;
   return get
@@ -27886,6 +27886,7 @@ goog.require("sleuth.xhr");
 goog.require("dommy.template");
 goog.require("jayq.core");
 sleuth.auth.auth_template = function auth_template(user) {
+  console.log(cljs.core.pr_str.call(null, user));
   if(cljs.core.empty_QMARK_.call(null, user)) {
     return cljs.core.PersistentVector.fromArray(["\ufdd0'a.persona-button.sign-in", cljs.core.ObjMap.fromObject(["\ufdd0'href"], {"\ufdd0'href":"#"}), "Sign In"], true)
   }else {
@@ -27897,8 +27898,8 @@ sleuth.auth.render_template = function render_template(container, user) {
 };
 sleuth.auth.login = function login(user) {
   return function(assertion) {
-    return sleuth.xhr.post.call(null, "/auth/login", assertion, null, function(p1__14701_SHARP_) {
-      return cljs.core.swap_BANG_.call(null, user, p1__14701_SHARP_)
+    return sleuth.xhr.post.call(null, "/auth/login", cljs.core.ObjMap.fromObject(["\ufdd0'assertion"], {"\ufdd0'assertion":assertion}), null, function(p1__24481_SHARP_) {
+      return cljs.core.swap_BANG_.call(null, user, cljs.core.conj, p1__24481_SHARP_)
     })
   }
 };

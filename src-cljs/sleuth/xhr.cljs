@@ -18,10 +18,11 @@
 
 (defn post-or-put
   [url data method & [user callback]]
-  (let [headers  ["Content-Type" "applicaiton/edn"] 
+  (let [headers  ["Content-Type" "application/edn"] 
         headers  (if-not (nil? user)
                    (into [] (concat headers 
-                                    ["Authorization" (auth user)])))
+                                    ["Authorization" (auth user)]))
+                   headers)
         edn-data (pr-str data)]
     (xhr/send url (xhr-to-edn callback) 
               method edn-data (apply js-obj headers))))

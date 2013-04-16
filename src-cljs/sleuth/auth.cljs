@@ -5,6 +5,7 @@
 
 (defn auth-template
   [user]
+  (.log js/console (pr-str user))
   (if (empty? user) 
     [:a.persona-button.sign-in {:href "#"} "Sign In"]
     [:a.persona-button.sign-out {:href "#"} "Sign Out"]))
@@ -16,7 +17,8 @@
 (defn login
   [user]
   (fn [assertion]
-    (xhr/post "/auth/login" assertion nil #(swap! user %))))
+    (xhr/post "/auth/login" {:assertion assertion} 
+              nil #(swap! user conj %))))
 
 (defn logout
   [user]

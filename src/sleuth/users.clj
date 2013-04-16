@@ -25,20 +25,22 @@
 
 (defn update!
   [id m]
-  (mc/update id m))
+  (mc/update-by-id "users" id m)
+  (by-id id))
 
 (defn create-or-update!
   [{:keys [email expires]}]
-  (let [user-record (mc/find-one-as-map {:email email})]
+  (let [user-record (mc/find-one-as-map "users" {:email email})]
     (if (nil? user-record)
       (create! {:email email :expires expires 
                 :site-ids [] :api-key (gen-key email)})
-      (update! {:_id user-record} {:expires expires}))))
+      (update! (:_id user-record) 
+               (merge user-record {:expires expires})))))
 
 (defn update-sites
   [user id]
   (if (not (some #{id} (:site-ids user)))
-    (mc/update "users" {:_id (:_id user)} {:site-ids {$push id}})))
+    (mc/update-by-id "users" (:_id user) {:site-ids {$push id}})))
 
 (defroutes user-routes
   (GET "/:id" [id] (respond-with-edn (by-id id))))

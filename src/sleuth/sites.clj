@@ -1,7 +1,7 @@
 (ns sleuth.sites
   (:use compojure.core
         sleuth.util)
-  (:require [monger.collections :as mc]
+  (:require [monger.collection :as mc]
             [sleuth.users :as user])
   (:import [org.bson.types ObjectId]))
 
@@ -12,7 +12,7 @@
 (defn create-or-update!
   [{:keys [user site]}]
   (let [id (ObjectId.)]
-    (mc/save "sites" (merge {_id: id} site))
+    (mc/save "sites" (merge {:_id id} site))
     (user/update-sites user id)))
 
 (defn delete!
@@ -21,12 +21,12 @@
 
 (defn owner? 
   [{:keys [user id]}]
-  (->> user-id
+  (->> user
        :site-ids
        (some #{id})))
 
 (defroutes site-routes
   (GET "/:id" [id] (respond-with-edn (by-id id)))
-  (POST "/" {params :params} (response-with-edn (create-or-update! params) 201))
-  (PUT "/:id" {params :params} (if (owner? params) (create-or-update params)))
+  (POST "/" {params :params} (respond-with-edn (create-or-update! params) 201))
+  (PUT "/:id" {params :params} (if (owner? params) (create-or-update! params)))
   (DELETE "/:id" [id] (delete! id)))
