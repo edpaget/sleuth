@@ -28,5 +28,12 @@
 (defroutes site-routes
   (GET "/:id" [id] (respond-with-edn (by-id id)))
   (POST "/" {params :params} (respond-with-edn (create-or-update! params) 201))
-  (PUT "/:id" {params :params} (if (owner? params) (create-or-update! params)))
-  (DELETE "/:id" [id] (delete! id)))
+  (PUT "/:id" {params :params} 
+       (if (owner? params) 
+         (respond-with-edn (create-or-update! params))
+         (forbidden)))
+  (DELETE "/:id" {params :params}
+          (if (owner? params) 
+            (do (delete! (:id params))
+                (respond-with-edn "" 204))
+            (forbidden))))

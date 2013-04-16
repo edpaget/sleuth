@@ -12,3 +12,7 @@
   {:status (or status 200)
    :headers {"Content-Type" "application/edn"}
    :body (pr-str (mongo-id-to-string body))})
+
+(defn forbidden
+  []
+  (respond-with-edn {:authorized false} 403))  
