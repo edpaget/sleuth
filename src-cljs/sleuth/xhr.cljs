@@ -13,8 +13,8 @@
         (f response)))))
 
 (defn auth
-  [{:keys [name token]}]
-  (js/btoa (str "Basic " name ":" token)))
+  [{:keys [email api-key]}]
+  (js/btoa (str "Basic " email ":" api-key)))
 
 (defn post-or-put
   [url data method & [user callback]]

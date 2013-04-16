@@ -5,14 +5,25 @@
             [sleuth.users :as user])
   (:import [org.bson.types ObjectId]))
 
+(defn gen-key
+  [user url]
+  (sha256 (:email user) url))
+
 (defn by-id
   [id]
   (mc/find-map-by-id "sites" id))
 
 (defn create-or-update!
-  [{:keys [user site]}]
-  (let [id (ObjectId.)]
-    (mc/save "sites" (merge {:_id id} site))
+  [{:keys [user _id name url event-count created-at]}]
+  (let [id (ObjectId.)
+        site (merge {:_id (or _id id)
+                     :name name
+                     :url url
+                     :event-count (or event-count 0)
+                     :site-key (gen-key user url)}
+                    (if-not (nil? created-at)
+                      {:created-at created-at}))]
+    (mc/save "sites" (timestamp site))
     (user/update-sites user id)))
 
 (defn delete!

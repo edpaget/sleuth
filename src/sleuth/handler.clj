@@ -6,11 +6,11 @@
   (:require [compojure.handler :as handler]
             [compojure.route :as route]
             [sleuth.auth :as auth] 
-            [sleuth.user :as user]
+            [sleuth.users :as user]
             [sleuth.sites :as sites]
             [monger.core :as m]
             [clojure.string :as s]
-            [clojure.data.code.base64 :as b64]))
+            [clojure.data.codec.base64 :as b64]))
 
 (m/connect!)
 (m/set-db! (m/get-db "sleuth-dev"))
@@ -22,6 +22,10 @@
 (defn authed-request?
   [req]
   (not (nil? (:authorization req))))
+
+(defn has-user?
+  [req]
+  (not (nil? (-> req :params :user))))
 
 (defn wrap-user-info
   [handler]
