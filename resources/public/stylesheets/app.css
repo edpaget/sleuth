@@ -1,0 +1,11 @@
+ul.site-info label {
+  display: inline;
+}
+
+h2 small {
+  font-size: 15px;
+}
+
+button.delete-site {
+  margin-top: 10px;
+}

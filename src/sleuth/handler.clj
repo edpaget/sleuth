@@ -21,7 +21,7 @@
 
 (defn authed-request?
   [req]
-  (not (nil? (:authorization req))))
+  (not (nil? (get-in req [:headers "authorization"]))))
 
 (defn has-user?
   [req]
@@ -31,11 +31,11 @@
   [handler]
   (fn [req]
     (if (authed-request? req)
-      (let [auth (:authorization req)
-            [email api-key] (->> (b64/decode auth)
-                                 (map char)
-                                 (apply str)
-                                 (s/split ":"))]
+      (let [auth (get-in req [:headers "authorization"])
+            [email api-key] (s/split (->> (b64/decode (.getBytes auth))
+                                          (map char)
+                                          (apply str)) #":")
+            [_ email] (s/split email #"\s")]
         (if-let [user (user/auth email api-key)]
           (let [req* (assoc req :params (merge (:params req) 
                                                {:user user}))]

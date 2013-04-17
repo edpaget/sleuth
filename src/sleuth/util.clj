@@ -1,19 +1,25 @@
 (ns sleuth.util
   (:import [java.security MessageDigest]))
 
+(defn convert-ids
+  [[k v]]
+  (cond (= :_id k) {k (.toString v)}
+        (not (nil? (re-find #"-ids" (str k)))) {k (into [] (map #(.toString %) v))}
+        (not (nil? (re-find #"-id" (str k)))) {k (.toString v)}
+        true {k v}))
+
 (defn- mongo-id-to-string
   [body]
-  (let [id (:_id body)]
-    (if-not (nil? id)
-      (merge body {:_id (.toString id)})
-      body))) 
+  (cond (map? body) (apply merge (map convert-ids body))
+        (seq? body) (map mongo-id-to-string body)
+        true body))
 
 (defn respond-with-edn
   "Converts the body into edn and allows the 
   status code of there response to be set"
   [body & [status]]
   {:status (or status 200)
-   :headers {"Content-Type" "application/edn"}
+   :headers {"Content-Type" "application/edn;charset=utf-8"}
    :body (pr-str (mongo-id-to-string body))})
 
 (defn forbidden

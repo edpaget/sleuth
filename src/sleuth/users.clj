@@ -3,6 +3,7 @@
         monger.operators
         sleuth.util) 
   (:require [monger.collection :as mc]
+            [monger.conversion :as conv]
             [validateur.validation :as v])
   (:import [org.bson.types ObjectId]))
 
@@ -13,13 +14,13 @@
 
 (defn auth
   [email api-key]
-  (mc/find-one-as-map {:email email :api-key api-key}))
+  (mc/find-one-as-map "users" {:email email :api-key api-key}))
 
 (defn by-id 
   "Retrieves the User Map from MongoDB 
   for the given id"
   [id]
-  (mc/find-map-by-id "users" id))
+  (mc/find-map-by-id "users" (conv/to-object-id id)))
 
 (defn create!
   "Creates a new MongoDB record for the 
@@ -49,7 +50,13 @@
   "Adds another site to a user record"
   [user id]
   (if (not (some #{id} (:site-ids user)))
-    (mc/update-by-id "users" (:_id user) {:site-ids {$push id}})))
+    (mc/update-by-id "users" (:_id user) {$push {:site-ids id}})))
+
+(defn delete-site
+  "Removes site from the user record"
+  [user id]
+  (if (some #{id} (:site-ids user))
+    (mc/update-by-id "users" (:_id user) {$pull {:site-ids id}})))
 
 (defroutes user-routes
   (GET "/:id" [id] (respond-with-edn (by-id id))))

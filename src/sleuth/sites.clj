@@ -11,40 +11,52 @@
 
 (defn by-id
   [id]
-  (mc/find-map-by-id "sites" id))
+  (mc/find-map-by-id "sites" (ObjectId. id)))
+
+(defn for-user
+  [user]
+  (mc/find-maps "sites" {:user-id (:_id user)}))
 
 (defn create-or-update!
-  [{:keys [user _id name url event-count created-at]}]
-  (let [id (ObjectId.)
-        site (merge {:_id (or _id id)
+  [{:keys [user id name url event-count created-at]}]
+  (let [id (if (nil? id) (ObjectId.) (ObjectId. id))
+        site (merge {:_id id
                      :name name
                      :url url
                      :event-count (or event-count 0)
-                     :site-key (gen-key user url)}
+                     :site-key (gen-key user url)
+                     :user-id (:_id user)}
                     (if-not (nil? created-at)
                       {:created-at created-at}))]
-    (mc/save "sites" (timestamp site))
-    (user/update-sites user id)))
+    (user/update-sites user id)
+    (mc/save-and-return "sites" (timestamp site))))
 
 (defn delete!
-  [id]
-  (mc/remove-by-id "sites" id))
+  [{:keys [id user]}]
+  (let [id (ObjectId. id)] 
+    (mc/remove-by-id "sites" id)
+    (user/delete-site user id)))
 
 (defn owner? 
   [{:keys [user id]}]
-  (->> user
-       :site-ids
-       (some #{id})))
+  (= (:_id user) (:user-id (by-id id))))
 
 (defroutes site-routes
-  (GET "/:id" [id] (respond-with-edn (by-id id)))
+  (GET "/" [user] (respond-with-edn (for-user user)))
+  (GET "/:id" {params :params}
+       (if (owner? params) 
+         (if-let [site (by-id (:id params))] 
+           (respond-with-edn site)
+           (respond-with-edn nil 404))
+         (forbidden)))
   (POST "/" {params :params} (respond-with-edn (create-or-update! params) 201))
   (PUT "/:id" {params :params} 
        (if (owner? params) 
-         (respond-with-edn (create-or-update! params))
+         (do (create-or-update! params) 
+             (respond-with-edn (by-id (:id params))))
          (forbidden)))
   (DELETE "/:id" {params :params}
           (if (owner? params) 
-            (do (delete! (:id params))
-                (respond-with-edn "" 204))
+            (do (delete! params)
+                (respond-with-edn nil 204))
             (forbidden))))
