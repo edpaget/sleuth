@@ -8,47 +8,13 @@
             [sleuth.auth :as auth] 
             [sleuth.users :as user]
             [sleuth.sites :as sites]
+            [sleuth.events :as events]
             [monger.core :as m]
-            [clojure.string :as s]
-            [clojure.data.codec.base64 :as b64]))
+            ))
 
 (m/connect!)
 (m/set-db! (m/get-db "sleuth-dev"))
 
-(defn not-authorized
-  [] 
-  (respond-with-edn {:authorized false} 401))
-
-(defn authed-request?
-  [req]
-  (not (nil? (get-in req [:headers "authorization"]))))
-
-(defn has-user?
-  [req]
-  (not (nil? (-> req :params :user))))
-
-(defn wrap-user-info
-  [handler]
-  (fn [req]
-    (if (authed-request? req)
-      (let [auth (get-in req [:headers "authorization"])
-            [email api-key] (s/split (->> (b64/decode (.getBytes auth))
-                                          (map char)
-                                          (apply str)) #":")
-            [_ email] (s/split email #"\s")]
-        (if-let [user (user/auth email api-key)]
-          (let [req* (assoc req :params (merge (:params req) 
-                                               {:user user}))]
-            (handler req*))
-          (not-authorized)))
-      (handler req))))
-
-(defn require-auth
-  [handler]
-  (fn [req]
-    (if (and (authed-request? req) (has-user? req))
-      (handler req)
-      (not-authorized))))
 
 (defn wrap-dir-index
   [handler]
@@ -57,7 +23,8 @@
                         #(if (= "/" %) "/index.html" %)))))
 
 (defroutes app-routes
-  (context "/sites" [] (require-auth sites/site-routes))
+  (context "/events" [] events/event-routes)
+  (context "/sites" [] sites/site-routes)
   (context "/auth" [] auth/auth-routes)
   (route/resources "/")
   (route/not-found "Not Found"))
@@ -66,5 +33,4 @@
              wrap-dir-index
              wrap-edn-params
              wrap-json-params
-             wrap-json-response
-             wrap-user-info))
+             wrap-json-response))

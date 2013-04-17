@@ -11,7 +11,7 @@
    (if-not (empty? site) 
      [:button.btn.btn-danger.pull-right.delete-site {:data-id (:_id site)} "Delete"])
    [:h2 
-    [:span.editable {:data-field "name"} (or (:name site) "New Site ")]
+    [:span.editable {:data-field "name"} (str (or (:name site) "New Site") " ")]
     [:small "Double click field to edit"]]
    [:ul.site-info
     [:li [:label "Site: "] 

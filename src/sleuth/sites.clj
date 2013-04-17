@@ -9,6 +9,10 @@
   [user url]
   (sha256 (:email user) url))
 
+(defn auth
+  [site site-key]
+  (mc/find-one-as-map "sites" {:name site :site-key site-key}))
+
 (defn by-id
   [id]
   (mc/find-map-by-id "sites" (ObjectId. id)))
@@ -41,7 +45,7 @@
   [{:keys [user id]}]
   (= (:_id user) (:user-id (by-id id))))
 
-(defroutes site-routes
+(defroutes unwrapped
   (GET "/" [user] (respond-with-edn (for-user user)))
   (GET "/:id" {params :params}
        (if (owner? params) 
@@ -60,3 +64,11 @@
             (do (delete! params)
                 (respond-with-edn nil 204))
             (forbidden))))
+
+(defn wrap-user-info
+  [handler]
+  (wrap-auth handler user/auth :user))
+
+(def site-routes (-> unwrapped
+                     (require-auth has-user?)
+                     wrap-user-info))

@@ -1,7 +1,9 @@
 (ns sleuth.util
+  (:require [clojure.string :as s]
+            [clojure.data.codec.base64 :as b64])
   (:import [java.security MessageDigest]))
 
-(defn convert-ids
+(defn- convert-ids
   [[k v]]
   (cond (= :_id k) {k (.toString v)}
         (not (nil? (re-find #"-ids" (str k)))) {k (into [] (map #(.toString %) v))}
@@ -41,3 +43,43 @@
     (. md update (.getBytes input))
     (let [digest (.digest md)]
       (apply str (map #(format "%02x" (bit-and % 0xff)) digest)))))
+
+(defn not-authorized
+  [] 
+  (respond-with-edn {:authorized false} 401))
+
+(defn authed-request?
+  [req]
+  (not (nil? (get-in req [:headers "authorization"])))) 
+
+(defn require-auth
+  [handler predicate]
+  (fn [req]
+    (if (and (authed-request? req) (predicate req))
+      (handler req)
+      (not-authorized))))
+
+(defn has-user?
+  [req]
+  (not (nil? (-> req :params :user))))
+
+(defn has-site?
+  [req]
+  (not (nil? (-> req :params :site))))
+
+(defn wrap-auth
+  [handler auth-func param-name]
+  (fn [req]
+    (if (authed-request? req)
+      (let [auth (get-in req [:headers "authorization"])
+            [id key] (s/split (->> (b64/decode (.getBytes auth))
+                                          (map char)
+                                          (apply str)) #":")
+            [_ id] (s/split id #"\s")]
+        (if-let [user (auth-func id key)]
+          (let [req* (assoc req :params (merge (:params req) 
+                                               {param-name user}))]
+            (handler req*))
+          (not-authorized)))
+      (handler req))))
+

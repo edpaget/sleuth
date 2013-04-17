@@ -25517,132 +25517,132 @@ sleuth.xhr.xhr_to_edn = function xhr_to_edn(f) {
     }
   }
 };
-sleuth.xhr.auth = function auth(p__51001) {
-  var map__51003 = p__51001;
-  var map__51003__$1 = cljs.core.seq_QMARK_.call(null, map__51003) ? cljs.core.apply.call(null, cljs.core.hash_map, map__51003) : map__51003;
-  var api_key = cljs.core._lookup.call(null, map__51003__$1, "\ufdd0'api-key", null);
-  var email = cljs.core._lookup.call(null, map__51003__$1, "\ufdd0'email", null);
+sleuth.xhr.auth = function auth(p__52045) {
+  var map__52047 = p__52045;
+  var map__52047__$1 = cljs.core.seq_QMARK_.call(null, map__52047) ? cljs.core.apply.call(null, cljs.core.hash_map, map__52047) : map__52047;
+  var api_key = cljs.core._lookup.call(null, map__52047__$1, "\ufdd0'api-key", null);
+  var email = cljs.core._lookup.call(null, map__52047__$1, "\ufdd0'email", null);
   return btoa([cljs.core.str("Basic "), cljs.core.str(email), cljs.core.str(":"), cljs.core.str(api_key)].join(""))
 };
 sleuth.xhr.post_or_put = function() {
-  var post_or_put__delegate = function(url, data, method, p__51004) {
-    var vec__51006 = p__51004;
-    var user = cljs.core.nth.call(null, vec__51006, 0, null);
-    var callback = cljs.core.nth.call(null, vec__51006, 1, null);
+  var post_or_put__delegate = function(url, data, method, p__52048) {
+    var vec__52050 = p__52048;
+    var user = cljs.core.nth.call(null, vec__52050, 0, null);
+    var callback = cljs.core.nth.call(null, vec__52050, 1, null);
     var headers = cljs.core.PersistentVector.fromArray(["Content-Type", "application/edn", "Accept", "applicaiton/edn"], true);
     var headers__$1 = !(user == null) ? cljs.core.into.call(null, cljs.core.PersistentVector.EMPTY, cljs.core.concat.call(null, headers, cljs.core.PersistentVector.fromArray(["Authorization", sleuth.xhr.auth.call(null, user)], true))) : headers;
     var edn_data = cljs.core.pr_str.call(null, data);
     return goog.net.XhrIo.send(url, sleuth.xhr.xhr_to_edn.call(null, callback), method, edn_data, cljs.core.apply.call(null, cljs.core.js_obj, headers__$1))
   };
   var post_or_put = function(url, data, method, var_args) {
-    var p__51004 = null;
+    var p__52048 = null;
     if(goog.isDef(var_args)) {
-      p__51004 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 3), 0)
+      p__52048 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 3), 0)
     }
-    return post_or_put__delegate.call(this, url, data, method, p__51004)
+    return post_or_put__delegate.call(this, url, data, method, p__52048)
   };
   post_or_put.cljs$lang$maxFixedArity = 3;
-  post_or_put.cljs$lang$applyTo = function(arglist__51007) {
-    var url = cljs.core.first(arglist__51007);
-    var data = cljs.core.first(cljs.core.next(arglist__51007));
-    var method = cljs.core.first(cljs.core.next(cljs.core.next(arglist__51007)));
-    var p__51004 = cljs.core.rest(cljs.core.next(cljs.core.next(arglist__51007)));
-    return post_or_put__delegate(url, data, method, p__51004)
+  post_or_put.cljs$lang$applyTo = function(arglist__52051) {
+    var url = cljs.core.first(arglist__52051);
+    var data = cljs.core.first(cljs.core.next(arglist__52051));
+    var method = cljs.core.first(cljs.core.next(cljs.core.next(arglist__52051)));
+    var p__52048 = cljs.core.rest(cljs.core.next(cljs.core.next(arglist__52051)));
+    return post_or_put__delegate(url, data, method, p__52048)
   };
   post_or_put.cljs$lang$arity$variadic = post_or_put__delegate;
   return post_or_put
 }();
 sleuth.xhr.post = function() {
-  var post__delegate = function(url, data, p__51008) {
-    var vec__51010 = p__51008;
-    var user = cljs.core.nth.call(null, vec__51010, 0, null);
-    var callback = cljs.core.nth.call(null, vec__51010, 1, null);
+  var post__delegate = function(url, data, p__52052) {
+    var vec__52054 = p__52052;
+    var user = cljs.core.nth.call(null, vec__52054, 0, null);
+    var callback = cljs.core.nth.call(null, vec__52054, 1, null);
     return sleuth.xhr.post_or_put.call(null, url, data, "POST", user, callback)
   };
   var post = function(url, data, var_args) {
-    var p__51008 = null;
+    var p__52052 = null;
     if(goog.isDef(var_args)) {
-      p__51008 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
+      p__52052 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
     }
-    return post__delegate.call(this, url, data, p__51008)
+    return post__delegate.call(this, url, data, p__52052)
   };
   post.cljs$lang$maxFixedArity = 2;
-  post.cljs$lang$applyTo = function(arglist__51011) {
-    var url = cljs.core.first(arglist__51011);
-    var data = cljs.core.first(cljs.core.next(arglist__51011));
-    var p__51008 = cljs.core.rest(cljs.core.next(arglist__51011));
-    return post__delegate(url, data, p__51008)
+  post.cljs$lang$applyTo = function(arglist__52055) {
+    var url = cljs.core.first(arglist__52055);
+    var data = cljs.core.first(cljs.core.next(arglist__52055));
+    var p__52052 = cljs.core.rest(cljs.core.next(arglist__52055));
+    return post__delegate(url, data, p__52052)
   };
   post.cljs$lang$arity$variadic = post__delegate;
   return post
 }();
 sleuth.xhr.put = function() {
-  var put__delegate = function(url, data, p__51012) {
-    var vec__51014 = p__51012;
-    var user = cljs.core.nth.call(null, vec__51014, 0, null);
-    var callback = cljs.core.nth.call(null, vec__51014, 1, null);
+  var put__delegate = function(url, data, p__52056) {
+    var vec__52058 = p__52056;
+    var user = cljs.core.nth.call(null, vec__52058, 0, null);
+    var callback = cljs.core.nth.call(null, vec__52058, 1, null);
     return sleuth.xhr.post_or_put.call(null, url, data, "PUT", user, callback)
   };
   var put = function(url, data, var_args) {
-    var p__51012 = null;
+    var p__52056 = null;
     if(goog.isDef(var_args)) {
-      p__51012 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
+      p__52056 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
     }
-    return put__delegate.call(this, url, data, p__51012)
+    return put__delegate.call(this, url, data, p__52056)
   };
   put.cljs$lang$maxFixedArity = 2;
-  put.cljs$lang$applyTo = function(arglist__51015) {
-    var url = cljs.core.first(arglist__51015);
-    var data = cljs.core.first(cljs.core.next(arglist__51015));
-    var p__51012 = cljs.core.rest(cljs.core.next(arglist__51015));
-    return put__delegate(url, data, p__51012)
+  put.cljs$lang$applyTo = function(arglist__52059) {
+    var url = cljs.core.first(arglist__52059);
+    var data = cljs.core.first(cljs.core.next(arglist__52059));
+    var p__52056 = cljs.core.rest(cljs.core.next(arglist__52059));
+    return put__delegate(url, data, p__52056)
   };
   put.cljs$lang$arity$variadic = put__delegate;
   return put
 }();
 sleuth.xhr.delete$ = function() {
-  var delete$__delegate = function(url, p__51016) {
-    var vec__51018 = p__51016;
-    var user = cljs.core.nth.call(null, vec__51018, 0, null);
-    var callback = cljs.core.nth.call(null, vec__51018, 1, null);
+  var delete$__delegate = function(url, p__52060) {
+    var vec__52062 = p__52060;
+    var user = cljs.core.nth.call(null, vec__52062, 0, null);
+    var callback = cljs.core.nth.call(null, vec__52062, 1, null);
     return sleuth.xhr.post_or_put.call(null, url, null, "DELETE", user, callback)
   };
   var delete$ = function(url, var_args) {
-    var p__51016 = null;
+    var p__52060 = null;
     if(goog.isDef(var_args)) {
-      p__51016 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 1), 0)
+      p__52060 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 1), 0)
     }
-    return delete$__delegate.call(this, url, p__51016)
+    return delete$__delegate.call(this, url, p__52060)
   };
   delete$.cljs$lang$maxFixedArity = 1;
-  delete$.cljs$lang$applyTo = function(arglist__51019) {
-    var url = cljs.core.first(arglist__51019);
-    var p__51016 = cljs.core.rest(arglist__51019);
-    return delete$__delegate(url, p__51016)
+  delete$.cljs$lang$applyTo = function(arglist__52063) {
+    var url = cljs.core.first(arglist__52063);
+    var p__52060 = cljs.core.rest(arglist__52063);
+    return delete$__delegate(url, p__52060)
   };
   delete$.cljs$lang$arity$variadic = delete$__delegate;
   return delete$
 }();
 sleuth.xhr.get = function() {
-  var get__delegate = function(url, user, p__51020) {
-    var vec__51022 = p__51020;
-    var callback = cljs.core.nth.call(null, vec__51022, 0, null);
+  var get__delegate = function(url, user, p__52064) {
+    var vec__52066 = p__52064;
+    var callback = cljs.core.nth.call(null, vec__52066, 0, null);
     var headers = {"Accept":"application/edn", "Authorization":sleuth.xhr.auth.call(null, user)};
     return goog.net.XhrIo.send(url, sleuth.xhr.xhr_to_edn.call(null, callback), "GET", null, headers)
   };
   var get = function(url, user, var_args) {
-    var p__51020 = null;
+    var p__52064 = null;
     if(goog.isDef(var_args)) {
-      p__51020 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
+      p__52064 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
     }
-    return get__delegate.call(this, url, user, p__51020)
+    return get__delegate.call(this, url, user, p__52064)
   };
   get.cljs$lang$maxFixedArity = 2;
-  get.cljs$lang$applyTo = function(arglist__51023) {
-    var url = cljs.core.first(arglist__51023);
-    var user = cljs.core.first(cljs.core.next(arglist__51023));
-    var p__51020 = cljs.core.rest(cljs.core.next(arglist__51023));
-    return get__delegate(url, user, p__51020)
+  get.cljs$lang$applyTo = function(arglist__52067) {
+    var url = cljs.core.first(arglist__52067);
+    var user = cljs.core.first(cljs.core.next(arglist__52067));
+    var p__52064 = cljs.core.rest(cljs.core.next(arglist__52067));
+    return get__delegate(url, user, p__52064)
   };
   get.cljs$lang$arity$variadic = get__delegate;
   return get
@@ -28004,8 +28004,8 @@ sleuth.auth.render_template = function render_template(container, user) {
 };
 sleuth.auth.login = function login(user) {
   return function(assertion) {
-    return sleuth.xhr.post.call(null, "/auth/login", cljs.core.ObjMap.fromObject(["\ufdd0'assertion"], {"\ufdd0'assertion":assertion}), null, function(p1__44411_SHARP_) {
-      return cljs.core.swap_BANG_.call(null, user, cljs.core.conj, p1__44411_SHARP_)
+    return sleuth.xhr.post.call(null, "/auth/login", cljs.core.ObjMap.fromObject(["\ufdd0'assertion"], {"\ufdd0'assertion":assertion}), null, function(p1__52036_SHARP_) {
+      return cljs.core.swap_BANG_.call(null, user, cljs.core.conj, p1__52036_SHARP_)
     })
   }
 };
@@ -28074,14 +28074,14 @@ goog.require("dommy.template");
 goog.require("jayq.core");
 sleuth.sites.site_template = function site_template(site) {
   return cljs.core.PersistentVector.fromArray(["\ufdd0'div.span8", !cljs.core.empty_QMARK_.call(null, site) ? cljs.core.PersistentVector.fromArray(["\ufdd0'button.btn.btn-danger.pull-right.delete-site", cljs.core.ObjMap.fromObject(["\ufdd0'data-id"], {"\ufdd0'data-id":(new cljs.core.Keyword("\ufdd0'_id")).call(null, site)}), "Delete"], true) : null, cljs.core.PersistentVector.fromArray(["\ufdd0'h2", cljs.core.PersistentVector.fromArray(["\ufdd0'span.editable", cljs.core.ObjMap.fromObject(["\ufdd0'data-field"], 
-  {"\ufdd0'data-field":"name"}), function() {
+  {"\ufdd0'data-field":"name"}), [cljs.core.str(function() {
     var or__3943__auto__ = (new cljs.core.Keyword("\ufdd0'name")).call(null, site);
     if(cljs.core.truth_(or__3943__auto__)) {
       return or__3943__auto__
     }else {
-      return"New Site "
+      return"New Site"
     }
-  }()], true), cljs.core.PersistentVector.fromArray(["\ufdd0'small", "Double click field to edit"], true)], true), cljs.core.PersistentVector.fromArray(["\ufdd0'ul.site-info", cljs.core.PersistentVector.fromArray(["\ufdd0'li", cljs.core.PersistentVector.fromArray(["\ufdd0'label", "Site: "], true), cljs.core.PersistentVector.fromArray(["\ufdd0'span.editable", cljs.core.ObjMap.fromObject(["\ufdd0'data-field"], {"\ufdd0'data-field":"url"}), function() {
+  }()), cljs.core.str(" ")].join("")], true), cljs.core.PersistentVector.fromArray(["\ufdd0'small", "Double click field to edit"], true)], true), cljs.core.PersistentVector.fromArray(["\ufdd0'ul.site-info", cljs.core.PersistentVector.fromArray(["\ufdd0'li", cljs.core.PersistentVector.fromArray(["\ufdd0'label", "Site: "], true), cljs.core.PersistentVector.fromArray(["\ufdd0'span.editable", cljs.core.ObjMap.fromObject(["\ufdd0'data-field"], {"\ufdd0'data-field":"url"}), function() {
     var or__3943__auto__ = (new cljs.core.Keyword("\ufdd0'url")).call(null, site);
     if(cljs.core.truth_(or__3943__auto__)) {
       return or__3943__auto__
@@ -28125,13 +28125,13 @@ sleuth.sites.render_site = function render_site(site) {
 sleuth.sites.fetch_BANG_ = function() {
   var fetch_BANG_ = null;
   var fetch_BANG___2 = function(user, sites) {
-    return sleuth.xhr.get.call(null, "/sites/", cljs.core.deref.call(null, user), function(p1__50657_SHARP_) {
-      return cljs.core.swap_BANG_.call(null, sites, cljs.core.into, p1__50657_SHARP_)
+    return sleuth.xhr.get.call(null, "/sites/", cljs.core.deref.call(null, user), function(p1__52404_SHARP_) {
+      return cljs.core.swap_BANG_.call(null, sites, cljs.core.into, p1__52404_SHARP_)
     })
   };
   var fetch_BANG___3 = function(user, id, active_site) {
-    return sleuth.xhr.get.call(null, [cljs.core.str("/sites/"), cljs.core.str(id)].join(""), cljs.core.deref.call(null, user), function(p1__50658_SHARP_) {
-      return cljs.core.swap_BANG_.call(null, active_site, cljs.core.conj, p1__50658_SHARP_)
+    return sleuth.xhr.get.call(null, [cljs.core.str("/sites/"), cljs.core.str(id)].join(""), cljs.core.deref.call(null, user), function(p1__52405_SHARP_) {
+      return cljs.core.swap_BANG_.call(null, active_site, cljs.core.conj, p1__52405_SHARP_)
     })
   };
   fetch_BANG_ = function(user, id, active_site) {
@@ -28151,12 +28151,12 @@ sleuth.sites.save_BANG_ = function save_BANG_(site, user) {
   var deref_site = cljs.core.deref.call(null, site);
   var id = (new cljs.core.Keyword("\ufdd0'_id")).call(null, deref_site);
   if(id == null) {
-    return sleuth.xhr.post.call(null, "/sites", deref_site, user, function(p1__50659_SHARP_) {
-      return cljs.core.swap_BANG_.call(null, site, cljs.core.conj, p1__50659_SHARP_)
+    return sleuth.xhr.post.call(null, "/sites", deref_site, user, function(p1__52406_SHARP_) {
+      return cljs.core.swap_BANG_.call(null, site, cljs.core.conj, p1__52406_SHARP_)
     })
   }else {
-    return sleuth.xhr.put.call(null, [cljs.core.str("/sites/"), cljs.core.str(id)].join(""), deref_site, user, function(p1__50660_SHARP_) {
-      return cljs.core.swap_BANG_.call(null, site, cljs.core.conj, p1__50660_SHARP_)
+    return sleuth.xhr.put.call(null, [cljs.core.str("/sites/"), cljs.core.str(id)].join(""), deref_site, user, function(p1__52407_SHARP_) {
+      return cljs.core.swap_BANG_.call(null, site, cljs.core.conj, p1__52407_SHARP_)
     })
   }
 };
@@ -28177,9 +28177,9 @@ sleuth.sites.update_active = function update_active(active_site, user) {
   }
 };
 sleuth.sites.initialize = function() {
-  var initialize__delegate = function(user, p__50661) {
-    var vec__50663 = p__50661;
-    var id = cljs.core.nth.call(null, vec__50663, 0, null);
+  var initialize__delegate = function(user, p__52408) {
+    var vec__52410 = p__52408;
+    var id = cljs.core.nth.call(null, vec__52410, 0, null);
     var sites = cljs.core.atom.call(null, cljs.core.PersistentVector.EMPTY);
     var active_site = cljs.core.atom.call(null, cljs.core.ObjMap.EMPTY);
     cljs.core.add_watch.call(null, sites, "\ufdd0'watch-change", function(key, a, old_val, new_val) {
@@ -28211,17 +28211,17 @@ sleuth.sites.initialize = function() {
     return sleuth.sites.render.call(null, cljs.core.deref.call(null, sites), cljs.core.deref.call(null, active_site))
   };
   var initialize = function(user, var_args) {
-    var p__50661 = null;
+    var p__52408 = null;
     if(goog.isDef(var_args)) {
-      p__50661 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 1), 0)
+      p__52408 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 1), 0)
     }
-    return initialize__delegate.call(this, user, p__50661)
+    return initialize__delegate.call(this, user, p__52408)
   };
   initialize.cljs$lang$maxFixedArity = 1;
-  initialize.cljs$lang$applyTo = function(arglist__50664) {
-    var user = cljs.core.first(arglist__50664);
-    var p__50661 = cljs.core.rest(arglist__50664);
-    return initialize__delegate(user, p__50661)
+  initialize.cljs$lang$applyTo = function(arglist__52411) {
+    var user = cljs.core.first(arglist__52411);
+    var p__52408 = cljs.core.rest(arglist__52411);
+    return initialize__delegate(user, p__52408)
   };
   initialize.cljs$lang$arity$variadic = initialize__delegate;
   return initialize
@@ -28244,13 +28244,13 @@ sleuth.main.initialize = function initialize() {
     }
   });
   cljs.core.swap_BANG_.call(null, secretary.core._STAR_routes_STAR_, cljs.core.assoc, "#/sites", function(params__3180__auto__) {
-    var vec__46766 = params__3180__auto__;
+    var vec__52034 = params__3180__auto__;
     return sleuth.sites.initialize.call(null, sleuth.main.user)
   });
   cljs.core.swap_BANG_.call(null, secretary.core._STAR_routes_STAR_, cljs.core.assoc, "#/sites/:id", function(params__3180__auto__) {
-    var map__46767 = params__3180__auto__;
-    var map__46767__$1 = cljs.core.seq_QMARK_.call(null, map__46767) ? cljs.core.apply.call(null, cljs.core.hash_map, map__46767) : map__46767;
-    var id = cljs.core._lookup.call(null, map__46767__$1, "\ufdd0'id", null);
+    var map__52035 = params__3180__auto__;
+    var map__52035__$1 = cljs.core.seq_QMARK_.call(null, map__52035) ? cljs.core.apply.call(null, cljs.core.hash_map, map__52035) : map__52035;
+    var id = cljs.core._lookup.call(null, map__52035__$1, "\ufdd0'id", null);
     return sleuth.sites.initialize.call(null, sleuth.main.user, id)
   });
   return jayq.core.on.call(null, jayq.core.$.call(null, window), "hashchange", function() {
