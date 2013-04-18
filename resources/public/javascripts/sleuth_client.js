@@ -13,18 +13,18 @@
     var xhr = new XMLHttpRequest();
 
     xhr.onload = function() {
-      console.log('here');
       if (xhr.status == 201) {
-        timeout = parseInt(xhr.resposne);
-        setTimeout(postLog, 500, auth);
+        timeout = parseInt(xhr.response);
+        setTimeout(postLog, timeout, auth);
       } else {
         throw new Error("Failed to Post to Server");
       }
     };
     xhr.open("POST", "http://localhost:3000/events/", true);
     xhr.setRequestHeader("Content-Type", "application/json;charset=utf-8");
+    xhr.setRequestHeader("Accept", "text/plain")
     if (typeof auth == 'object') {
-      authStr = btoa(auth.site + ":" + auth.site_key);
+      authStr = btoa(auth.site + ":" + auth.key);
       xhr.setRequestHeader("Authorization", "Basic " + authStr);
     }
     xhr.send(JSON.stringify(data));
@@ -50,8 +50,12 @@
   }
 
   function postLog(auth) {
-    send(auth, events);
-    events.log = [];
+    if (events.log.length != 0) {
+      send(auth, events);
+      events.log = [];
+    } else {
+      setTimeout(postLog, 5000, auth);
+    }
   }
 
   function init(site, key) {

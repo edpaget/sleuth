@@ -71,11 +71,10 @@
   [handler auth-func param-name]
   (fn [req]
     (if (authed-request? req)
-      (let [auth (get-in req [:headers "authorization"])
+      (let [auth (last (re-find #"^Basic (.+)$" (get-in req [:headers "authorization"])))
             [id key] (s/split (->> (b64/decode (.getBytes auth))
                                           (map char)
-                                          (apply str)) #":")
-            [_ id] (s/split id #"\s")]
+                                          (apply str)) #":")]
         (if-let [user (auth-func id key)]
           (let [req* (assoc req :params (merge (:params req) 
                                                {param-name user}))]

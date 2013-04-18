@@ -17,7 +17,7 @@
 
 (defn auth
   [{:keys [email api-key]}]
-  (js/btoa (str "Basic " email ":" api-key)))
+  (str "Basic " (js/btoa (str email ":" api-key))))
 
 (defn post-or-put
   [url data method & [user callback]]

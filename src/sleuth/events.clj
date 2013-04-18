@@ -7,8 +7,11 @@
   (:import [org.bson.types ObjectId]))
 
 (defn create!
-  [{:keys [logs site]}]
-  )
+  [{site :site logs "log"}]
+  (println logs)
+  (if-let [events (map #(merge {:_id (ObjectId.) :site-id (:_id site)} %) logs)]
+    (do (println events)
+        (mc/insert-batch (str "events-" (:url site)) events))))
 
 (defn site-match
   [handler]
@@ -28,12 +31,15 @@
             :headers {"Access-Control-Allow-Origin" "*"
                       "Access-Control-Allow-Headers" "authorization,content-type"
                       "Access-Control-Allow-Methods" "POST"}})
-  
+
   (-> (POST "/" {params :params} 
-            (do (future (create! params))
+            (do (println params)
+                (future (create! params))
                 {:status 201
-                 :headers {"Content-Type" "text/plain"
-                           "Allow-Access-Control-Origin" (get-in params [:site :url])}
+                 :headers {"Content-Type" "text/plain;charset=utf-8"
+                           "Access-Control-Allow-Origin" (get-in params [:site :url])
+                           "Access-Control-Allow-Headers" "authorization,content-type"
+                           "Access-Control-Allow-Methods" "POST"}
                  :body "5000"}))
       site-match
       (require-auth has-site?)
