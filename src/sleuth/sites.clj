@@ -2,7 +2,8 @@
   (:use compojure.core
         sleuth.util)
   (:require [monger.collection :as mc]
-            [sleuth.users :as user])
+            [sleuth.users :as user]
+            [clojure.string :as s])
   (:import [org.bson.types ObjectId]))
 
 (defn gen-key
@@ -25,8 +26,8 @@
   [{:keys [user id name url event-count created-at]}]
   (let [id (if (nil? id) (ObjectId.) (ObjectId. id))
         site (merge {:_id id
-                     :name name
-                     :url url
+                     :name (s/trim name)
+                     :url (s/trim url)
                      :event-count (or event-count 0)
                      :site-key (gen-key user url)
                      :user-id (:_id user)}

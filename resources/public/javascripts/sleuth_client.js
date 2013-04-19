@@ -1,13 +1,24 @@
 (function() {
-  var events = {log: []}
-  if ((typeof require != 'undefined') && (typeof define == 'undefined'))
+  var events = {log: []};
+  var session = sessionID();
+
+  if ((typeof require != 'undefined') && (typeof define == 'undefined')) {
     try {
       var user = require('zooniverse/lib/modles/user');
     } catch (e) {
       var user = require('lib/user');
     }
-  else
+  } else {
     var user = {current: {id: ""}};
+  }
+
+  function sessionID() {
+    var guid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+      return v.toString(16);
+    });
+    return guid;
+  }
 
   function send(auth, data) {
     var xhr = new XMLHttpRequest();
@@ -45,7 +56,10 @@
       position: { x: e.clientX, y: e.clientY},
       user: current_user,
       value: e.target.value,
-      dataset: e.target.dataset
+      dataset: e.target.dataset,
+      window_height: window.innerHeight,
+      window_width: window.innerWidth,
+      session: session
     });
   }
 

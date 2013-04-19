@@ -7,14 +7,17 @@
                  [clj-http "0.7.2"]
                  [ring/ring-json "0.2.0"]
                  [com.novemberain/monger "1.5.0"]
-                 [clj-time "0.5.0"]
                  [jayq "2.3.0"]
                  [secretary "0.2.0-SNAPSHOT"]
                  [org.clojure/data.json "0.2.2"]
                  [org.clojure/data.codec "0.1.0"]
                  [prismatic/dommy "0.1.0"]]
   :plugins [[lein-cljsbuild "0.3.0"]
-            [lein-ring "0.8.2"]]
+            [lein-ring "0.8.2"]
+            [speclj "2.5.0"]]
+  :profiles {:dev {:dependencies [[speclj "2.5.0"]
+                                  [ring-mock "0.1.3"]]}}
+  :test-paths ["spec/"]
   :cljsbuild {
               :builds [{
                         :source-paths ["src-cljs"]
@@ -22,6 +25,4 @@
                                    :output-to "resources/public/javascripts/app.js"
                                    :optimizations :whitespace
                                    :pretty-print true}}]}
-  :ring {:handler sleuth.handler/app}
-  :profiles
-  {:dev {:dependencies [[ring-mock "0.1.3"]]}})
+  :ring {:handler sleuth.handler/app})
