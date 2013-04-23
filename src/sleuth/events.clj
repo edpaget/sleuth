@@ -1,17 +1,22 @@
 (ns sleuth.events
   (:use compojure.core
         sleuth.util)
-  (:require [monger.collection :as mc]
-            [sleuth.sites :as sites]
-            )
+  (:require [sleuth.sites :as sites]
+            [cemerick.bandalore :as sqs])
   (:import [org.bson.types ObjectId]))
 
-(defn create!
+(def client (sqs/create-client (get (System/getenv) "AMAZON_SECRET_ID")
+                               (get (System/getenv) "AMAZON_SECRET_ACCESS_KEY")))
+
+(def queue (sqs/create-queue client "sleuth-dev"))
+
+(defn enqueue! 
   [{site :site logs "log"}]
-  (println logs)
-  (if-let [events (map #(merge {:_id (ObjectId.) :site-id (:_id site)} %) logs)]
-    (do (println events)
-        (mc/insert-batch (str "events-" (:url site)) events))))
+  (if-let [events (map #(merge {
+                               :site-url (:url site)} %) logs)]
+    (doseq [event events]
+      (println event)
+      (sqs/send client queue (pr-str events)))))
 
 (defn site-match
   [handler]
@@ -33,8 +38,7 @@
                       "Access-Control-Allow-Methods" "POST"}})
 
   (-> (POST "/" {params :params} 
-            (do (println params)
-                (future (create! params))
+            (do (future (enqueue! params))
                 {:status 201
                  :headers {"Content-Type" "text/plain;charset=utf-8"
                            "Access-Control-Allow-Origin" (get-in params [:site :url])

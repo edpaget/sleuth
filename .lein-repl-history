@@ -38,3 +38,23 @@ true
 (= \t true)
 (if \t 1)
 (if true 1)
+(System/getEnv)
+(System/getenv)
+(get (System/getenv) "AMAZON_SECRET_ID")
+(get (System/getenv) "AMAZON_ACCESS_ID")
+(require '[ceremick.bandoler :as sqs])
+(require '[cemerick.bandalore :as sqs])
+(def client (sqs/create-client (get (System/getenv) "AMAZON_SECRET_ID") (get (System/getenv) "AMAZON_SECRET_ACCSS_KEY")))
+(def client (sqs/create-client (get (System/getenv) "AMAZON_SECRET_ID") (get (System/getenv) "AMAZON_SECRET_ACCESS_KEY")))
+(def q (sqs/create-queue client "sleuth-repl"))
+q
+(sqs/send client q "test-message")
+(sqs/list-queues client)
+(sqs/receive client q)
+(sqs/delete-queue client q)
+(def q (sqs/list-queues))
+(sqs/list-queues client)
+(def q (first *1))
+q
+(sqs/receive client q)
+clojure.reader/read-edn
