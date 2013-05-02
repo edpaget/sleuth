@@ -2,14 +2,15 @@
   var events = {log: []};
   var session = sessionID();
 
-  if ((typeof require != 'undefined') && (typeof define == 'undefined')) {
+  if ((typeof require != 'undefined') && 
+      (typeof define == 'undefined')) {
     try {
       var user = require('zooniverse/lib/modles/user');
     } catch (e) {
       var user = require('lib/user');
     }
   } else {
-    var user = {current: {id: ""}};
+    var user = {current: {id: "Not Logged In"}};
   }
 
   function sessionID() {
@@ -42,25 +43,38 @@
   }
 
   function logEvent(e) {
-    var current_user;
+    var currentUser;
     if ((typeof user.current == 'undefined') ||
         (user.current == null))
-      current_user = "Not Logged-In"
+      currentUser = "Not Logged-In"
     else
-      current_user = user.current.id
+      currentUser = user.current.id
+    e.user = currentUser;
+    e.session = session;
+    events.log.push(e);
+  }
 
-    events.log.push({
+  function logDomEvent(e) {
+    event = {
+      type: e.type,
       tag: e.target.tagName,
       idName: e.target.id,
       className: e.target.className,
-      position: { x: e.clientX, y: e.clientY},
-      user: current_user,
+      position_x: e.clientX,
+      position_y: e.clientY,
       value: e.target.value,
-      dataset: e.target.dataset,
       window_height: window.innerHeight,
       window_width: window.innerWidth,
-      session: session
-    });
+      created_at: new Date()
+    };
+    logEvent(event);
+  }
+
+  function logCustomEvent(e) {
+    if (typeof e.type == 'undefined')
+      throw new Error("Events Must Have a Type");
+    else
+      logEvent(e);
   }
 
   function postLog(auth) {
@@ -74,10 +88,16 @@
 
   function init(site, key) {
     var auth = {site: site, key: key};
-    document.addEventListener("click", logEvent, true);
+    document.addEventListener("click", logDomEvent, true);
+    document.addEventListener("change", logDomEvent, true);
     setTimeout(postLog, 5000, auth);
   }
 
-  this.init = init;
+  sleuth = {
+    logCustomEvent: logCustomEvent,
+    init: init
+  };
+
+  this.sleuth = sleuth;
 
 }).call(this);

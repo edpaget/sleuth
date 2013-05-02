@@ -12,10 +12,8 @@
 
 (defn enqueue! 
   [{site :site logs "log"}]
-  (if-let [events (map #(merge {
-                               :site-url (:url site)} %) logs)]
+  (if-let [events (map #(merge {"site-url" (:url site)} %) logs)]
     (doseq [event events]
-      (println event)
       (sqs/send client queue (pr-str events)))))
 
 (defn site-match

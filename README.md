@@ -16,4 +16,6 @@ To start a web server for the application, run:
 
 ## License
 
-Copyright © 2013 FIXME
+Copyright © 2013 Edward Paget
+
+License under the GNU Affero General Public License
