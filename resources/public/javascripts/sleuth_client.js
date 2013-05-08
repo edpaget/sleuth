@@ -43,6 +43,7 @@
   }
 
   function logEvent(e) {
+    console.log(e);
     var currentUser;
     if ((typeof user.current == 'undefined') ||
         (user.current == null))
@@ -51,21 +52,23 @@
       currentUser = user.current.id
     e.user = currentUser;
     e.session = session;
+    e.created_at = new Date();
+    e.path_name = location.pathname + location.hash
     events.log.push(e);
   }
 
   function logDomEvent(e) {
+    console.log(e);
     event = {
       type: e.type,
       tag: e.target.tagName,
-      idName: e.target.id,
-      className: e.target.className,
+      id_name: e.target.id,
+      class_name: e.target.className,
       position_x: e.clientX,
       position_y: e.clientY,
-      value: e.target.value,
+      value: (e.target.value || ""),
       window_height: window.innerHeight,
-      window_width: window.innerWidth,
-      created_at: new Date()
+      window_width: window.innerWidth
     };
     logEvent(event);
   }
