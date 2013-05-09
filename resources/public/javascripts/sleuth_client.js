@@ -43,7 +43,6 @@
   }
 
   function logEvent(e) {
-    console.log(e);
     var currentUser;
     if ((typeof user.current == 'undefined') ||
         (user.current == null))
@@ -53,12 +52,13 @@
     e.user = currentUser;
     e.session = session;
     e.created_at = new Date();
+    e.window_height = window.innerHeight;
+    e.window_width = window.innerWidth;
     e.path_name = location.pathname + location.hash
     events.log.push(e);
   }
 
   function logDomEvent(e) {
-    console.log(e);
     event = {
       type: e.type,
       tag: e.target.tagName,
@@ -66,16 +66,14 @@
       class_name: e.target.className,
       position_x: e.clientX,
       position_y: e.clientY,
-      value: (e.target.value || ""),
-      window_height: window.innerHeight,
-      window_width: window.innerWidth
+      value: (e.target.value || "")
     };
     logEvent(event);
   }
 
   function logCustomEvent(e) {
-    if (typeof e.type == 'undefined')
-      throw new Error("Events Must Have a Type");
+    if ((typeof e.type == 'undefined') || (typeof e.value == 'undefined'))
+      throw new Error("Events Must Have a Type and Value");
     else
       logEvent(e);
   }

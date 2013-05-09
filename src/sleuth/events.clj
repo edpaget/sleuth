@@ -15,23 +15,27 @@
 
 (db/ensure-table cred {:name "events" 
                        :hash-key {:name "site-url" :type :s}
-                       :range-key {:name "type" :type :s}
+                       :range-key {:name "created_at" :type :s}
                        :throughput {:read 10 :write 5}
                        :indexes [{:name "sessions" 
                                   :range-key {:name "session" :type :s}
                                   :projection :include
-                                  :included-attrs ["window_height window_width" "user" "created-at"]}]})
+                                  :included-attrs ["window_height window_width" "user"]}
+                                 {:name "types"
+                                  :range-key {:name "type" :type :s}
+                                  :projection :include
+                                  :included-attrs ["id_name" "tag" "class-names" "value"]}]})
 
 (defn- selector-to-map
   "Splits CSS Selector into map of its components"
   [selector]
   (->> (split selector #"(?=[\.#])")
-       (group-by #(case (nth %)
+       (group-by #(case (first %)
                     \. :classes
                     \# :id
                     "default" :tag))
        (fmap (fn [xs] (map #(if (or (= \. (first %)) (= \# (first %)))
-                              (apply str (rest %))))))))
+                              (apply str (rest %))) xs)))))
 
 (defn- select
   "Predicate to filter based on stripped down css selectors"
@@ -39,23 +43,19 @@
   (if-not (nil? selector) 
     (let [{:keys [tag id classes]} (selector-to-map selector)
           [sel-tag] tag
-          [id] id]
-      (fn [{:strs [tag idName class-names]}]
+          [id] id
+          classes (into #{} classes)]
+      (fn [{:strs [tag id_name class-names]}]
         (and (if sel-tag (= sel-tag tag) true)
-             (if id (= id idName) true)
-             (if classes (subset? class-names classes) true)))
-      (fn [x] true))))
-
-(defn- date-range
-  "Predicate to filter based on date range"
-  [start end]
-  (fn [{:strs [created_at]}]
-    (and (if start (> start created_at) true)
-         (if end (< end created_at) true))))
+             (if id (= id id_name) true)
+             (if classes (subset? class-names classes) true))))
+    (fn [x] true)))
 
 (defn- event-date
   [{:strs [created_at]}]
-  (str (t/year created_at) (t/month created_at) (t/day created_at)))
+  (str (t/year created_at) "-" 
+       (t/month created_at) "-"
+       (t/day created_at)))
 
 (defn- event-value
   [{:strs [value]}]
@@ -72,17 +72,40 @@
   [events]
   (map #(vector :put "events" (empty-str-to-space %)) events))
 
+(defn- classes-to-set
+  "Converts string at class_name to a set of class-names"
+  [m]
+  (let [classes (->> (split (m "class_name") #"\s")
+                     (into #{})
+                     empty-str-to-space)]
+    (merge (dissoc m "class_name") {"class-names" classes})))
+
+(defn- json-date-to-joda
+  [event]
+  (merge event {"created_at" (f/parse (event "created_at"))}))
+
+(defn- query-output
+  [events]
+  [(group-by event-date events) (group-by event-value events)])
+
 (defn create! 
   [{site :site logs "log"}]
-  (if-let [events (map #(merge {"site-url" (:url site)} %) logs)]
+  (if-let [events (->> (map #(merge {"site-url" (:url site)} %) logs)
+                       (map classes-to-set))]
     (apply (partial db/batch-write-item cred) (batch-create events))))
 
 (defn query
-  [site type & [selector [start-date end-date]]]
-  (if-let [events (->> (db/lazy-query cred "events" {"site-url" site} '(type = "type"))
-                       (map #(merge % {"created_at" (f/parse (% "created_at"))}))
-                       (filter #(and ((select selector) %) ((date-range start-date end-date) %))))]
-     [(group-by event-date events) (group-by event-value events)]))
+  ([site start-date end-date type selector]
+   (when-let [events (->> (db/lazy-query cred "events" {"site-url" site} '("created_at" :<=> start-date end-date))
+                          (map json-date-to-joda)
+                          (filter #(and (if type (= (% "type") type) true) 
+                                        ((select selector) %))))]
+     (query-output events)))
+  ([site type selector]
+   (when-let [events (->> (db/lazy-query cred "events" {"site-url" site} ["type" := type] {:index "types"})
+                          (map json-date-to-joda)
+                          (filter (select selector)))]
+     (query-output events))))
 
 (defn site-match
   [handler]
