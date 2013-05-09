@@ -4,14 +4,18 @@
         [clojure.set :only [subset?]]
         [clojure.algo.generic.functor :only [fmap]]
         [clojure.string :only [split]])
-  (:require [sleuth.sites :as sites]
-            [rotary.client :as db]
+  (:require [rotary.client :as db]
+            [monger.collection :as mc]
             [clj-time.core :as t]
             [clj-time.format :as f])
   (:import [org.bson.types ObjectId]))
 
 (def cred {:access-key (get (System/getenv) "AMAZON_SECRET_ID")
            :secret-key (get (System/getenv) "AMAZON_SECRET_ACCESS_KEY")})
+
+(defn auth
+  [site site-key]
+  (mc/find-one-as-map "sites" {:name site :site-key site-key}))
 
 (db/ensure-table cred {:name "events" 
                        :hash-key {:name "site-url" :type :s}
@@ -96,11 +100,13 @@
 
 (defn query
   ([site start-date end-date type selector]
-   (when-let [events (->> (db/lazy-query cred "events" {"site-url" site} '("created_at" :<=> start-date end-date))
-                          (map json-date-to-joda)
-                          (filter #(and (if type (= (% "type") type) true) 
-                                        ((select selector) %))))]
-     (query-output events)))
+   (if (nil? start-date)
+     (query site type selector)
+     (when-let [events (->> (db/lazy-query cred "events" {"site-url" site} '("created_at" :<=> start-date end-date))
+                            (map json-date-to-joda)
+                            (filter #(and (if type (= (% "type") type) true) 
+                                          ((select selector) %))))]
+       (query-output events))))
   ([site type selector]
    (when-let [events (->> (db/lazy-query cred "events" {"site-url" site} ["type" := type] {:index "types"})
                           (map json-date-to-joda)
@@ -117,7 +123,7 @@
 
 (defn wrap-site-info
   [handler]
-  (wrap-auth handler sites/auth :site))  
+  (wrap-auth handler auth :site))  
 
 (defroutes event-routes
   (OPTIONS "/" {headers :headers} 
