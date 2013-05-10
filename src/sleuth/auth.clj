@@ -8,7 +8,9 @@
 (defn verify
   [assertion]
   (let [body  (json/write-str {:assertion assertion
-                               :audience "http://localhost:3000"})]
+                               :audience (if (get (System/getenv) "LEIN_NO_DEV")
+                                           "https://sleuther.herokuapp.com"
+                                           "http://localhost:3000")})]
     (client/post "https://login.persona.org/verify" 
                  {:body body
                   :headers {"Content-Type" "application/json"}})))
