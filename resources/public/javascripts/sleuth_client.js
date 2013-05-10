@@ -22,6 +22,7 @@
   }
 
   function send(auth, data) {
+    var url;
     var xhr = new XMLHttpRequest();
 
     xhr.onload = function() {
@@ -32,7 +33,12 @@
         throw new Error("Failed to Post to Server");
       }
     };
-    xhr.open("POST", "http://localhost:3000/events/", true);
+    if (parseInt(location.hash) > 1024) {
+      url = "http://localhost:3000/events/";
+    } else {
+      url = "https://sleuther.herokuapp.com/events/";
+    }
+    xhr.open("POST", url, true); 
     xhr.setRequestHeader("Content-Type", "application/json;charset=utf-8");
     xhr.setRequestHeader("Accept", "text/plain")
     if (typeof auth == 'object') {
