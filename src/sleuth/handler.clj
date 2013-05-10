@@ -39,7 +39,7 @@
              wrap-json-response))
 
 (defn -main 
-  [port]
+  [& [port]]
   (init-db)
   (events/init-table)
   (run-jetty app {:port (Integer. port)}))
