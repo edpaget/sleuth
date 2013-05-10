@@ -32,4 +32,5 @@
                                    :output-to "resources/public/javascripts/app.js"
                                    :optimizations :whitespace
                                    :pretty-print true}}]}
-  :ring {:handler sleuth.handler/app})
+  :ring {:handler sleuth.handler/app}
+  :min-lein-version "2.0.0")
