@@ -4,6 +4,7 @@
   :license {:name "GNU Affero General Public License"
             :url "http://www.gnu.org/licenses/agpl.html"}
   :dependencies [[org.clojure/clojure "1.5.1"]
+                 [ring/ring-jetty-adapter "1.1.0"]
                  [compojure "1.1.5"]
                  [ring-edn "0.1.0"]
                  [clj-http "0.7.2"]
@@ -11,7 +12,7 @@
                  [com.novemberain/monger "1.5.0"]
                  [prismatic/dommy "0.1.1"]
                  [com.cemerick/bandalore "0.0.3"]
-                 [rotary "0.3.0-SNAPSHOT"]
+                 [bdisraeli/rotary "0.3.0-SNAPSHOT"]
                  [com.amazonaws/aws-java-sdk "1.4.3"]
                  [clj-time "0.5.0"]
                  [jayq "2.3.0"]

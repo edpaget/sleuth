@@ -2,15 +2,15 @@
   (:use compojure.core
         ring.middleware.edn
         ring.middleware.json
-        sleuth.util)
+        sleuth.util
+        [ring.adapter.jetty :only [run-jetty]])
   (:require [compojure.handler :as handler]
             [compojure.route :as route]
             [sleuth.auth :as auth] 
             [sleuth.users :as user]
             [sleuth.sites :as sites]
             [sleuth.events :as events]
-            [monger.core :as m]
-            ))
+            [monger.core :as m]))
 
 (m/connect!)
 (m/set-db! (m/get-db "sleuth-dev"))
@@ -34,3 +34,7 @@
              wrap-edn-params
              wrap-json-params
              wrap-json-response))
+
+(defn -main 
+  [port]
+  (run-jetty app {:port (Integer. port)}))
