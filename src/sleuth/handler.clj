@@ -11,8 +11,10 @@
             [sleuth.sites :as sites]
             [sleuth.events :as events]
             [monger.core :as m]))
+(if-let [mongo-uri (get (System/getenv) "MONGOHQ_URL")]
+  (m/connect-via-uri! mongo-uri)
+  (m/connect!))
 
-(m/connect!)
 (m/set-db! (m/get-db "sleuth-dev"))
 
 
