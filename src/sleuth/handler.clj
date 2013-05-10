@@ -16,8 +16,8 @@
   [] 
   (if-let [mongo-uri (get (System/getenv) "MONGOHQ_URL")]
     (m/connect-via-uri! mongo-uri)
-    (m/connect!))
-  (m/set-db! (m/get-db "sleuth-dev")))
+    (do (m/set-db! (m/get-db "sleuth-dev")) 
+        (m/connect!))))
 
 (defn wrap-dir-index
   [handler]
