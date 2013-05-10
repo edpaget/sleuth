@@ -16,6 +16,7 @@
 
   (defroute "#/sites" [] (sites/initialize user))
   (defroute "#/sites/:id" {:keys [id]} (sites/initialize user id))
+  (defroute "#/sites/:id/events/:event-id" {:keys [id event-id] (sites/initialize user id event-id)})
   (on ($ js/window) "hashchange" #(secretary/dispatch! (.-hash js/location)))) 
 
 (.ready ($ :document) initialize) 

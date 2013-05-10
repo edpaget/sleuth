@@ -16,7 +16,6 @@
    [:ul.site-info
     [:li [:label "Site: "] 
      [:span.editable {:data-field "url"} (or (:url site) "http://example.com")]]
-    [:li [:label "Event Count: "] (str (or (:event-count site) 0))]
     [:li [:label "Site Key: "] (or (:site-key site) "Create a site!")]]])
 
 (defn- site-listing
@@ -82,7 +81,7 @@
     (save! active-site @user)))
 
 (defn initialize 
-  [user & [id]]
+  [user & [id event-id]]
   (let [sites (atom [])
         active-site (atom {})]
     (add-watch sites :watch-change 
