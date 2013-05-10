@@ -16,8 +16,8 @@
   [] 
   (if-let [mongo-uri (get (System/getenv) "MONGOHQ_URL")]
     (m/connect-via-uri! mongo-uri)
-    (do (m/set-db! (m/get-db "sleuth-dev")) 
-        (m/connect!))))
+    (do (m/connect!)
+        (m/set-db! (m/get-db "sleuth-dev")))))
 
 (defn wrap-dir-index
   [handler]
@@ -29,6 +29,7 @@
   (context "/events" [] events/event-routes)
   (context "/sites" [] sites/site-routes)
   (context "/auth" [] auth/auth-routes)
+  (GET "/pingdom" [] "Ok")
   (route/resources "/")
   (route/not-found "Not Found"))
 

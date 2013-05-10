@@ -7,7 +7,7 @@
 (defn- site-template
   "Creates the dommy template for the site view"
   [site]
-  [:div.span8
+  [:div.span9
    (if-not (empty? site) 
      [:button.btn.btn-danger.pull-right.delete-site {:data-id (:_id site)} "Delete"])
    [:h2 
@@ -26,7 +26,7 @@
   "Creates the dommy template for the entire sites page"
   [sites active]
   [:div.row
-   [:div.span4
+   [:div.span3
     [:h4 "Your Sites"]
     [:ul.sites
      (map site-listing sites)
@@ -50,10 +50,8 @@
     (set! (.-hash js/location) (str "#/sites/" (:_id site)))))
 
 (defn- fetch!
-  ([user sites]
-   (xhr/get "/sites/" @user #(swap! sites into %)))
-  ([user id active-site]
-   (xhr/get (str "/sites/" id) @user #(swap! active-site conj %))))
+  [user sites]
+  (xhr/get "/sites/" @user #(swap! sites into %)))
 
 (defn- save!
   "Saves the active site to the api"
@@ -81,15 +79,11 @@
     (save! active-site @user)))
 
 (defn initialize 
-  [user & [id event-id]]
-  (let [sites (atom [])
-        active-site (atom {})]
+  [user & [id]]
+  (let [sites (atom [])]
     (add-watch sites :watch-change 
                (fn [key a old-val new-val]
                  (render new-val @active-site)))
-    (add-watch active-site :watch-change 
-               (fn [key a old-val new-val]
-                 (render-site new-val)))
     (fetch! user sites)
     (if-not (or (nil? id) (= "new" id) (= "" id)) 
       (fetch! user id active-site))

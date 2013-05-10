@@ -39,12 +39,11 @@
   "Checks if a user already exists and either creates
   for updates the user from the hash returns by Persona"
   [{:keys [email expires]}]
-  (let [user-record (mc/find-one-as-map "users" {:email email})]
-    (if (nil? user-record)
-      (create! (timestamp {:email email :expires expires 
-                           :site-ids [] :api-key (gen-key email)}))
-      (update! (:_id user-record) 
-               (timestamp (merge user-record {:expires expires}))))))
+  (if-let [user-record (mc/find-one-as-map "users" {:email email})]
+    (update! (:_id user-record) 
+             (timestamp (merge user-record {:expires expires})))
+    (create! (timestamp {:email email :expires expires 
+                         :site-ids [] :api-key (gen-key email)}))))
 
 (defn update-sites
   "Adds another site to a user record"

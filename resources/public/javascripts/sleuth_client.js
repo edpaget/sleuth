@@ -1,16 +1,19 @@
 (function() {
   var events = {log: []};
   var session = sessionID();
+  var user;
 
-  if ((typeof require != 'undefined') && 
+  if (typeof zooniverse != 'undefined') {
+    user = zooniverse.models.User
+  } else if ((typeof require != 'undefined') && 
       (typeof define == 'undefined')) {
     try {
-      var user = require('zooniverse/lib/modles/user');
+      user = require('zooniverse/lib/models/user');
     } catch (e) {
-      var user = require('lib/user');
+      user = require('lib/user');
     }
   } else {
-    var user = {current: {id: "Not Logged In"}};
+    user = {current: {id: "Not Logged In"}};
   }
 
   function sessionID() {
