@@ -25,8 +25,8 @@
   (mc/ensure-index "sites" (array-map :url 1) {:unique true})
   (let [id (if (nil? id) (ObjectId.) (ObjectId. id))
         site (merge {:_id id
-                     :name (if name (s/trim name) "")
-                     :url (if url (s/trim url) "")
+                     :name (if name (s/trim name) "New Site")
+                     :url (if url (s/trim url) "http://example.com")
                      :event-count (or event-count 0)
                      :site-key (gen-key user url)
                      :user-id (:_id user)
