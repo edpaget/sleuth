@@ -11,12 +11,13 @@
             [sleuth.sites :as sites]
             [sleuth.events :as events]
             [monger.core :as m]))
-(if-let [mongo-uri (get (System/getenv) "MONGOHQ_URL")]
-  (m/connect-via-uri! mongo-uri)
-  (m/connect!))
 
-(m/set-db! (m/get-db "sleuth-dev"))
-
+(defn init 
+  [] 
+  (if-let [mongo-uri (get (System/getenv) "MONGOHQ_URL")]
+    (m/connect-via-uri! mongo-uri)
+    (m/connect!))
+  (m/set-db! (m/get-db "sleuth-dev")))
 
 (defn wrap-dir-index
   [handler]
@@ -40,3 +41,5 @@
 (defn -main 
   [port]
   (run-jetty app {:port (Integer. port)}))
+
+(init)

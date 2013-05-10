@@ -10,25 +10,29 @@
             [clj-time.format :as f])
   (:import [org.bson.types ObjectId]))
 
-(def cred {:access-key (get (System/getenv) "AMAZON_SECRET_ID")
-           :secret-key (get (System/getenv) "AMAZON_SECRET_ACCESS_KEY")})
+(defn cred 
+  []
+  {:access-key (get (System/getenv) "AMAZON_SECRET_ID")
+   :secret-key (get (System/getenv) "AMAZON_SECRET_ACCESS_KEY")})
 
 (defn auth
   [site site-key]
   (mc/find-one-as-map "sites" {:name site :site-key site-key}))
 
-(db/ensure-table cred {:name "events" 
-                       :hash-key {:name "site-url" :type :s}
-                       :range-key {:name "created_at" :type :s}
-                       :throughput {:read 10 :write 5}
-                       :indexes [{:name "sessions" 
-                                  :range-key {:name "session" :type :s}
-                                  :projection :include
-                                  :included-attrs ["window_height window_width" "user"]}
-                                 {:name "types"
-                                  :range-key {:name "type" :type :s}
-                                  :projection :include
-                                  :included-attrs ["id_name" "tag" "class-names" "value"]}]})
+(defn init 
+  []
+  (db/ensure-table (cred) {:name "events" 
+                           :hash-key {:name "site-url" :type :s}
+                           :range-key {:name "created_at" :type :s}
+                           :throughput {:read 10 :write 5}
+                           :indexes [{:name "sessions" 
+                                      :range-key {:name "session" :type :s}
+                                      :projection :include
+                                      :included-attrs ["window_height window_width" "user"]}
+                                     {:name "types"
+                                      :range-key {:name "type" :type :s}
+                                      :projection :include
+                                      :included-attrs ["id_name" "tag" "class-names" "value"]}]}))
 
 (defn- selector-to-map
   "Splits CSS Selector into map of its components"
@@ -96,19 +100,19 @@
   [{site :site logs "log"}]
   (if-let [events (->> (map #(merge {"site-url" (:url site)} %) logs)
                        (map classes-to-set))]
-    (apply (partial db/batch-write-item cred) (batch-create events))))
+    (apply (partial db/batch-write-item (cred)) (batch-create events))))
 
 (defn query
   ([site start-date end-date type selector]
    (if (nil? start-date)
      (query site type selector)
-     (when-let [events (->> (db/lazy-query cred "events" {"site-url" site} '("created_at" :<=> start-date end-date))
+     (when-let [events (->> (db/lazy-query (cred) "events" {"site-url" site} '("created_at" :<=> start-date end-date))
                             (map json-date-to-joda)
                             (filter #(and (if type (= (% "type") type) true) 
                                           ((select selector) %))))]
        (query-output events))))
   ([site type selector]
-   (when-let [events (->> (db/lazy-query cred "events" {"site-url" site} ["type" := type] {:index "types"})
+   (when-let [events (->> (db/lazy-query (cred) "events" {"site-url" site} ["type" := type] {:index "types"})
                           (map json-date-to-joda)
                           (filter (select selector)))]
      (query-output events))))
@@ -143,3 +147,5 @@
       site-match
       (require-auth has-site?)
       wrap-site-info))
+
+(init)
