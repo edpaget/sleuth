@@ -19,7 +19,7 @@
   [site site-key]
   (mc/find-one-as-map "sites" {:name site :site-key site-key}))
 
-(defn init 
+(defn init-table
   []
   (db/ensure-table (cred) {:name "events" 
                            :hash-key {:name "site-url" :type :s}
@@ -147,5 +147,3 @@
       site-match
       (require-auth has-site?)
       wrap-site-info))
-
-(init)

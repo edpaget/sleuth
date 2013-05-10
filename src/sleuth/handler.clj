@@ -12,7 +12,7 @@
             [sleuth.events :as events]
             [monger.core :as m]))
 
-(defn init 
+(defn init-db
   [] 
   (if-let [mongo-uri (get (System/getenv) "MONGOHQ_URL")]
     (m/connect-via-uri! mongo-uri)
@@ -40,6 +40,7 @@
 
 (defn -main 
   [port]
+  (init-db)
+  (events/init-table)
   (run-jetty app {:port (Integer. port)}))
 
-(init)
