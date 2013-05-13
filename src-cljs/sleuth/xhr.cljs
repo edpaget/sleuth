@@ -4,16 +4,15 @@
 
 (defn xhr-to-edn 
   [f]
-  (if (nil? f)
-    nil
+  (when f
     (fn [e] 
       (let [target (.-target e)]
-        (if (nil? (some #{(.getStatus target)} [200 201 202]))
-          (f)
+        (if (some #{(.getStatus target)} [200 201 202])
           (let [response (-> target 
                              .getResponseText
                              cljs.reader/read-string)]
-            (f response)))))))
+            (f response))
+          (f))))))
 
 (defn auth
   [{:keys [email api-key]}]

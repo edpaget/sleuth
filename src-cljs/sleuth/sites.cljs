@@ -1,5 +1,6 @@
 (ns sleuth.sites
-  (:use [jayq.core :only [$ inner value on off]])
+  (:use [jayq.core :only [$ inner value on off]]
+        [sleuth.sites-persistence :only [fetch! save! delete!]])
   (:require [dommy.template :as dommy]
             [sleuth.xhr :as xhr]
             [sleuth.editable :as edit]))
@@ -7,7 +8,7 @@
 (defn- site-template
   "Creates the dommy template for the site view"
   [site]
-  [:div.span9
+  [:div.span9.site
    (if-not (empty? site) 
      [:button.btn.btn-danger.pull-right.delete-site {:data-id (:_id site)} "Delete"])
    [:h2 
@@ -26,68 +27,34 @@
   "Creates the dommy template for the entire sites page"
   [sites active]
   [:div.row
-   [:div.span3
+   [:div.span3.sites-list
     [:h4 "Your Sites"]
     [:ul.sites
      (map site-listing sites)
      [:li.new-site [:a {:href (str "#/sites/new")} "Add new site"]]]]
-   [:div.site (site-template active)]])
+   (site-template active)])
 
 (defn- render
   "Renders the entire site page"
   [sites active]
   (inner ($ :#main.container) 
          (dommy/node 
-           (sites-template sites active))))
-
-(defn- render-site
-  "Renders only the active site"
-  [site]
-  (inner ($ :div.site) 
-         (dommy/node
-           (site-template site)))
-  (if-not (nil? (:_id site))
-    (set! (.-hash js/location) (str "#/sites/" (:_id site)))))
-
-(defn- fetch!
-  [user sites]
-  (xhr/get "/sites/" @user #(swap! sites into %)))
-
-(defn- save!
-  "Saves the active site to the api"
-  [site user]
-  (let [deref-site @site
-        id (:_id deref-site)]
-    (if (nil? id)
-      (xhr/post "/sites" deref-site user 
-                #(swap! site conj %))
-      (xhr/put (str "/sites/" id) deref-site user 
-               #(swap! site conj %)))))
-
-(defn- delete!
-  [user sites active-site]
-  (fn [e]
-    (let [id (-> e .-target .-dataset .-id)]
-      (xhr/delete (str "/sites/" id) @user #(do (swap! active-site {})
-                                                (fetch! user sites)
-                                                (set! (.-hash js/location) "#/sites"))))))
+           (sites-template (vals sites) active))))
 
 (defn update-active
-  [active-site user]
+  [sites active-site user]
   (fn [field value]
-    (swap! active-site merge {(keyword field) value})
-    (save! active-site @user)))
+    (let [active-site (merge active-site {(keyword field) value})] 
+      (save! sites active-site @user))))
 
 (defn initialize 
-  [user & [id]]
-  (let [sites (atom [])]
-    (add-watch sites :watch-change 
-               (fn [key a old-val new-val]
-                 (render new-val @active-site)))
-    (fetch! user sites)
-    (if-not (or (nil? id) (= "new" id) (= "" id)) 
-      (fetch! user id active-site))
-    (off ($ :#main.container) "click" :button.delete-site)
-    (on ($ :#main.container) "click" :button.delete-site (delete! user sites active-site))
-    (edit/initialize (update-active active-site user))
-    (render @sites @active-site)))
+  [user sites & [id]]
+  (add-watch sites :render
+             (fn [key a old-val new-val]
+               (render new-val (new-val id))))
+  (when (or (nil? id) (empty? @sites)) 
+    (fetch! user sites))
+  (render @sites (@sites id))
+  (off ($ :#main.container) "click" :button.delete-site)
+  (on ($ :#main.container) "click" :button.delete-site (delete! user sites))
+  (edit/initialize (update-active sites (@sites id) user)))

@@ -19,7 +19,7 @@
                  [secretary "0.2.0-SNAPSHOT"]
                  [org.clojure/data.json "0.2.2"]
                  [org.clojure/data.codec "0.1.0"]]
-  :plugins [[lein-cljsbuild "0.3.0"]
+  :plugins [[lein-cljsbuild "0.3.2"]
             [lein-ring "0.8.2"]
             [speclj "2.5.0"]]
   :profiles {:dev {:dependencies [[speclj "2.5.0"]

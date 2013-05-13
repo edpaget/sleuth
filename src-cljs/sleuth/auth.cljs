@@ -1,23 +1,23 @@
 (ns sleuth.auth
-  (:use [jayq.core :only [$ inner on]])
-  (:require [dommy.template :as dommy]
-            [sleuth.xhr :as xhr]))
+  (:use [jayq.core :only [$ inner on]]
+        [dommy.core :only [replace-contents!]])
+  (:use-macros [dommy.macros :only [sel1 deftemplate]])
+  (:require [sleuth.xhr :as xhr]))
 
-(defn auth-template
-  [user]
+(deftemplate auth-template [user]
   (if (empty? user) 
     [:a.persona-button.sign-in {:href "#"} "Sign In"]
     [:a.persona-button.sign-out {:href "#"} "Sign Out"]))
 
 (defn render-template
   [container user]
-  (inner ($ container) (dommy/node (auth-template user))))
+  (replace-contents! (sel1 container) (auth-template user)))
 
 (defn login
   [user]
   (fn [assertion]
     (xhr/post "/auth/login" {:assertion assertion} 
-              nil #(swap! user conj %))))
+              nil #(swap! user merge %))))
 
 (defn logout
   [user]
