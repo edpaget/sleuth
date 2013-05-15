@@ -16,6 +16,7 @@
                  [com.amazonaws/aws-java-sdk "1.4.3"]
                  [clj-time "0.5.0"]
                  [jayq "2.3.0"]
+                 [com.keminglabs/c2 "0.2.2"]
                  [secretary "0.2.0-SNAPSHOT"]
                  [org.clojure/data.json "0.2.2"]
                  [org.clojure/data.codec "0.1.0"]]

@@ -487,6 +487,19 @@ goog.base = function(me, opt_methodName, var_args) {
 goog.scope = function(fn) {
   fn.call(goog.global)
 };
+goog.provide("goog.debug.Error");
+goog.debug.Error = function(opt_msg) {
+  if(Error.captureStackTrace) {
+    Error.captureStackTrace(this, goog.debug.Error)
+  }else {
+    this.stack = (new Error).stack || ""
+  }
+  if(opt_msg) {
+    this.message = String(opt_msg)
+  }
+};
+goog.inherits(goog.debug.Error, Error);
+goog.debug.Error.prototype.name = "CustomError";
 goog.provide("goog.string");
 goog.provide("goog.string.Unicode");
 goog.string.Unicode = {NBSP:"\u00a0"};
@@ -927,19 +940,6 @@ goog.string.parseInt = function(value) {
   }
   return NaN
 };
-goog.provide("goog.debug.Error");
-goog.debug.Error = function(opt_msg) {
-  if(Error.captureStackTrace) {
-    Error.captureStackTrace(this, goog.debug.Error)
-  }else {
-    this.stack = (new Error).stack || ""
-  }
-  if(opt_msg) {
-    this.message = String(opt_msg)
-  }
-};
-goog.inherits(goog.debug.Error, Error);
-goog.debug.Error.prototype.name = "CustomError";
 goog.provide("goog.asserts");
 goog.provide("goog.asserts.AssertionError");
 goog.require("goog.debug.Error");
@@ -26142,137 +26142,137 @@ sleuth.xhr.xhr_to_edn = function xhr_to_edn(f) {
     return null
   }
 };
-sleuth.xhr.auth = function auth(p__4101) {
-  var map__4103 = p__4101;
-  var map__4103__$1 = cljs.core.seq_QMARK_.call(null, map__4103) ? cljs.core.apply.call(null, cljs.core.hash_map, map__4103) : map__4103;
-  var api_key = cljs.core.get.call(null, map__4103__$1, "\ufdd0:api-key");
-  var email = cljs.core.get.call(null, map__4103__$1, "\ufdd0:email");
+sleuth.xhr.auth = function auth(p__62739) {
+  var map__62741 = p__62739;
+  var map__62741__$1 = cljs.core.seq_QMARK_.call(null, map__62741) ? cljs.core.apply.call(null, cljs.core.hash_map, map__62741) : map__62741;
+  var api_key = cljs.core.get.call(null, map__62741__$1, "\ufdd0:api-key");
+  var email = cljs.core.get.call(null, map__62741__$1, "\ufdd0:email");
   return[cljs.core.str("Basic "), cljs.core.str(btoa([cljs.core.str(email), cljs.core.str(":"), cljs.core.str(api_key)].join("")))].join("")
 };
 sleuth.xhr.post_or_put = function() {
-  var post_or_put__delegate = function(url, data, method, p__4104) {
-    var vec__4106 = p__4104;
-    var user = cljs.core.nth.call(null, vec__4106, 0, null);
-    var callback = cljs.core.nth.call(null, vec__4106, 1, null);
+  var post_or_put__delegate = function(url, data, method, p__62742) {
+    var vec__62744 = p__62742;
+    var user = cljs.core.nth.call(null, vec__62744, 0, null);
+    var callback = cljs.core.nth.call(null, vec__62744, 1, null);
     var headers = cljs.core.PersistentVector.fromArray(["Content-Type", "application/edn", "Accept", "applicaiton/edn"], true);
     var headers__$1 = !(user == null) ? cljs.core.into.call(null, cljs.core.PersistentVector.EMPTY, cljs.core.concat.call(null, headers, cljs.core.PersistentVector.fromArray(["Authorization", sleuth.xhr.auth.call(null, user)], true))) : headers;
     var edn_data = cljs.core.pr_str.call(null, data);
     return goog.net.XhrIo.send(url, sleuth.xhr.xhr_to_edn.call(null, callback), method, edn_data, cljs.core.apply.call(null, cljs.core.js_obj, headers__$1))
   };
   var post_or_put = function(url, data, method, var_args) {
-    var p__4104 = null;
+    var p__62742 = null;
     if(arguments.length > 3) {
-      p__4104 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 3), 0)
+      p__62742 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 3), 0)
     }
-    return post_or_put__delegate.call(this, url, data, method, p__4104)
+    return post_or_put__delegate.call(this, url, data, method, p__62742)
   };
   post_or_put.cljs$lang$maxFixedArity = 3;
-  post_or_put.cljs$lang$applyTo = function(arglist__4107) {
-    var url = cljs.core.first(arglist__4107);
-    arglist__4107 = cljs.core.next(arglist__4107);
-    var data = cljs.core.first(arglist__4107);
-    arglist__4107 = cljs.core.next(arglist__4107);
-    var method = cljs.core.first(arglist__4107);
-    var p__4104 = cljs.core.rest(arglist__4107);
-    return post_or_put__delegate(url, data, method, p__4104)
+  post_or_put.cljs$lang$applyTo = function(arglist__62745) {
+    var url = cljs.core.first(arglist__62745);
+    arglist__62745 = cljs.core.next(arglist__62745);
+    var data = cljs.core.first(arglist__62745);
+    arglist__62745 = cljs.core.next(arglist__62745);
+    var method = cljs.core.first(arglist__62745);
+    var p__62742 = cljs.core.rest(arglist__62745);
+    return post_or_put__delegate(url, data, method, p__62742)
   };
   post_or_put.cljs$core$IFn$_invoke$arity$variadic = post_or_put__delegate;
   return post_or_put
 }();
 sleuth.xhr.post = function() {
-  var post__delegate = function(url, data, p__4108) {
-    var vec__4110 = p__4108;
-    var user = cljs.core.nth.call(null, vec__4110, 0, null);
-    var callback = cljs.core.nth.call(null, vec__4110, 1, null);
+  var post__delegate = function(url, data, p__62746) {
+    var vec__62748 = p__62746;
+    var user = cljs.core.nth.call(null, vec__62748, 0, null);
+    var callback = cljs.core.nth.call(null, vec__62748, 1, null);
     return sleuth.xhr.post_or_put.call(null, url, data, "POST", user, callback)
   };
   var post = function(url, data, var_args) {
-    var p__4108 = null;
+    var p__62746 = null;
     if(arguments.length > 2) {
-      p__4108 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
+      p__62746 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
     }
-    return post__delegate.call(this, url, data, p__4108)
+    return post__delegate.call(this, url, data, p__62746)
   };
   post.cljs$lang$maxFixedArity = 2;
-  post.cljs$lang$applyTo = function(arglist__4111) {
-    var url = cljs.core.first(arglist__4111);
-    arglist__4111 = cljs.core.next(arglist__4111);
-    var data = cljs.core.first(arglist__4111);
-    var p__4108 = cljs.core.rest(arglist__4111);
-    return post__delegate(url, data, p__4108)
+  post.cljs$lang$applyTo = function(arglist__62749) {
+    var url = cljs.core.first(arglist__62749);
+    arglist__62749 = cljs.core.next(arglist__62749);
+    var data = cljs.core.first(arglist__62749);
+    var p__62746 = cljs.core.rest(arglist__62749);
+    return post__delegate(url, data, p__62746)
   };
   post.cljs$core$IFn$_invoke$arity$variadic = post__delegate;
   return post
 }();
 sleuth.xhr.put = function() {
-  var put__delegate = function(url, data, p__4112) {
-    var vec__4114 = p__4112;
-    var user = cljs.core.nth.call(null, vec__4114, 0, null);
-    var callback = cljs.core.nth.call(null, vec__4114, 1, null);
+  var put__delegate = function(url, data, p__62750) {
+    var vec__62752 = p__62750;
+    var user = cljs.core.nth.call(null, vec__62752, 0, null);
+    var callback = cljs.core.nth.call(null, vec__62752, 1, null);
     return sleuth.xhr.post_or_put.call(null, url, data, "PUT", user, callback)
   };
   var put = function(url, data, var_args) {
-    var p__4112 = null;
+    var p__62750 = null;
     if(arguments.length > 2) {
-      p__4112 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
+      p__62750 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
     }
-    return put__delegate.call(this, url, data, p__4112)
+    return put__delegate.call(this, url, data, p__62750)
   };
   put.cljs$lang$maxFixedArity = 2;
-  put.cljs$lang$applyTo = function(arglist__4115) {
-    var url = cljs.core.first(arglist__4115);
-    arglist__4115 = cljs.core.next(arglist__4115);
-    var data = cljs.core.first(arglist__4115);
-    var p__4112 = cljs.core.rest(arglist__4115);
-    return put__delegate(url, data, p__4112)
+  put.cljs$lang$applyTo = function(arglist__62753) {
+    var url = cljs.core.first(arglist__62753);
+    arglist__62753 = cljs.core.next(arglist__62753);
+    var data = cljs.core.first(arglist__62753);
+    var p__62750 = cljs.core.rest(arglist__62753);
+    return put__delegate(url, data, p__62750)
   };
   put.cljs$core$IFn$_invoke$arity$variadic = put__delegate;
   return put
 }();
 sleuth.xhr.delete$ = function() {
-  var delete$__delegate = function(url, p__4116) {
-    var vec__4118 = p__4116;
-    var user = cljs.core.nth.call(null, vec__4118, 0, null);
-    var callback = cljs.core.nth.call(null, vec__4118, 1, null);
+  var delete$__delegate = function(url, p__62754) {
+    var vec__62756 = p__62754;
+    var user = cljs.core.nth.call(null, vec__62756, 0, null);
+    var callback = cljs.core.nth.call(null, vec__62756, 1, null);
     return sleuth.xhr.post_or_put.call(null, url, null, "DELETE", user, callback)
   };
   var delete$ = function(url, var_args) {
-    var p__4116 = null;
+    var p__62754 = null;
     if(arguments.length > 1) {
-      p__4116 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 1), 0)
+      p__62754 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 1), 0)
     }
-    return delete$__delegate.call(this, url, p__4116)
+    return delete$__delegate.call(this, url, p__62754)
   };
   delete$.cljs$lang$maxFixedArity = 1;
-  delete$.cljs$lang$applyTo = function(arglist__4119) {
-    var url = cljs.core.first(arglist__4119);
-    var p__4116 = cljs.core.rest(arglist__4119);
-    return delete$__delegate(url, p__4116)
+  delete$.cljs$lang$applyTo = function(arglist__62757) {
+    var url = cljs.core.first(arglist__62757);
+    var p__62754 = cljs.core.rest(arglist__62757);
+    return delete$__delegate(url, p__62754)
   };
   delete$.cljs$core$IFn$_invoke$arity$variadic = delete$__delegate;
   return delete$
 }();
 sleuth.xhr.get = function() {
-  var get__delegate = function(url, user, p__4120) {
-    var vec__4122 = p__4120;
-    var callback = cljs.core.nth.call(null, vec__4122, 0, null);
+  var get__delegate = function(url, user, p__62758) {
+    var vec__62760 = p__62758;
+    var callback = cljs.core.nth.call(null, vec__62760, 0, null);
     var headers = {"Accept":"application/edn", "Authorization":sleuth.xhr.auth.call(null, user)};
     return goog.net.XhrIo.send(url, sleuth.xhr.xhr_to_edn.call(null, callback), "GET", null, headers)
   };
   var get = function(url, user, var_args) {
-    var p__4120 = null;
+    var p__62758 = null;
     if(arguments.length > 2) {
-      p__4120 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
+      p__62758 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
     }
-    return get__delegate.call(this, url, user, p__4120)
+    return get__delegate.call(this, url, user, p__62758)
   };
   get.cljs$lang$maxFixedArity = 2;
-  get.cljs$lang$applyTo = function(arglist__4123) {
-    var url = cljs.core.first(arglist__4123);
-    arglist__4123 = cljs.core.next(arglist__4123);
-    var user = cljs.core.first(arglist__4123);
-    var p__4120 = cljs.core.rest(arglist__4123);
-    return get__delegate(url, user, p__4120)
+  get.cljs$lang$applyTo = function(arglist__62761) {
+    var url = cljs.core.first(arglist__62761);
+    arglist__62761 = cljs.core.next(arglist__62761);
+    var user = cljs.core.first(arglist__62761);
+    var p__62758 = cljs.core.rest(arglist__62761);
+    return get__delegate(url, user, p__62758)
   };
   get.cljs$core$IFn$_invoke$arity$variadic = get__delegate;
   return get
@@ -30389,25 +30389,25 @@ goog.provide("sleuth.sites_persistence");
 goog.require("cljs.core");
 goog.require("sleuth.xhr");
 sleuth.sites_persistence.sites_to_map = function sites_to_map(sites) {
-  return cljs.core.zipmap.call(null, cljs.core.map.call(null, function(p1__3451_SHARP_) {
-    return(new cljs.core.Keyword("\ufdd0:_id")).call(null, p1__3451_SHARP_)
+  return cljs.core.zipmap.call(null, cljs.core.map.call(null, function(p1__61700_SHARP_) {
+    return(new cljs.core.Keyword("\ufdd0:_id")).call(null, p1__61700_SHARP_)
   }, sites), sites)
 };
 sleuth.sites_persistence.fetch_BANG_ = function fetch_BANG_(user, sites) {
-  return sleuth.xhr.get.call(null, "/sites/", cljs.core.deref.call(null, user), function(p1__3485_SHARP_) {
-    return cljs.core.swap_BANG_.call(null, sites, cljs.core.merge, sleuth.sites_persistence.sites_to_map.call(null, p1__3485_SHARP_))
+  return sleuth.xhr.get.call(null, "/sites/", cljs.core.deref.call(null, user), function(p1__61734_SHARP_) {
+    return cljs.core.swap_BANG_.call(null, sites, cljs.core.merge, sleuth.sites_persistence.sites_to_map.call(null, p1__61734_SHARP_))
   })
 };
 sleuth.sites_persistence.save_BANG_ = function save_BANG_(sites, site, user) {
   var temp__4090__auto__ = cljs.core.PersistentArrayMap.fromArray(["\ufdd0:_id", site], true);
   if(cljs.core.truth_(temp__4090__auto__)) {
     var id = temp__4090__auto__;
-    return sleuth.xhr.put.call(null, [cljs.core.str("/sites/"), cljs.core.str(id)].join(""), site, user, function(p1__3486_SHARP_) {
-      return cljs.core.swap_BANG_.call(null, sites, cljs.core.assoc, id, p1__3486_SHARP_)
+    return sleuth.xhr.put.call(null, [cljs.core.str("/sites/"), cljs.core.str(id)].join(""), site, user, function(p1__61735_SHARP_) {
+      return cljs.core.swap_BANG_.call(null, sites, cljs.core.assoc, id, p1__61735_SHARP_)
     })
   }else {
-    return sleuth.xhr.post.call(null, "/sites", site, user, function(p1__3487_SHARP_) {
-      return cljs.core.swap_BANG_.call(null, sites, cljs.core.conj, p1__3487_SHARP_)
+    return sleuth.xhr.post.call(null, "/sites", site, user, function(p1__61736_SHARP_) {
+      return cljs.core.swap_BANG_.call(null, sites, cljs.core.conj, p1__61736_SHARP_)
     })
   }
 };
@@ -30507,42 +30507,32 @@ sleuth.sites.update_active = function update_active(sites, active_site, user) {
   }
 };
 sleuth.sites.initialize = function() {
-  var initialize__delegate = function(user, sites, p__4097) {
-    var vec__4099 = p__4097;
-    var id = cljs.core.nth.call(null, vec__4099, 0, null);
+  var initialize__delegate = function(user, sites, p__78613) {
+    var vec__78615 = p__78613;
+    var id = cljs.core.nth.call(null, vec__78615, 0, null);
     cljs.core.add_watch.call(null, sites, "\ufdd0:render", function(key, a, old_val, new_val) {
       return sleuth.sites.render.call(null, new_val, new_val.call(null, id))
     });
-    if(function() {
-      var or__3943__auto__ = id == null;
-      if(or__3943__auto__) {
-        return or__3943__auto__
-      }else {
-        return cljs.core.empty_QMARK_.call(null, cljs.core.deref.call(null, sites))
-      }
-    }()) {
-      sleuth.sites_persistence.fetch_BANG_.call(null, user, sites)
-    }else {
-    }
+    sleuth.sites_persistence.fetch_BANG_.call(null, user, sites);
     sleuth.sites.render.call(null, cljs.core.deref.call(null, sites), cljs.core.deref.call(null, sites).call(null, id));
     jayq.core.off.call(null, jayq.core.$.call(null, "\ufdd0:#main.container"), "click", "\ufdd0:button.delete-site");
     jayq.core.on.call(null, jayq.core.$.call(null, "\ufdd0:#main.container"), "click", "\ufdd0:button.delete-site", sleuth.sites_persistence.delete_BANG_.call(null, user, sites));
     return sleuth.editable.initialize.call(null, sleuth.sites.update_active.call(null, sites, cljs.core.deref.call(null, sites).call(null, id), user))
   };
   var initialize = function(user, sites, var_args) {
-    var p__4097 = null;
+    var p__78613 = null;
     if(arguments.length > 2) {
-      p__4097 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
+      p__78613 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
     }
-    return initialize__delegate.call(this, user, sites, p__4097)
+    return initialize__delegate.call(this, user, sites, p__78613)
   };
   initialize.cljs$lang$maxFixedArity = 2;
-  initialize.cljs$lang$applyTo = function(arglist__4100) {
-    var user = cljs.core.first(arglist__4100);
-    arglist__4100 = cljs.core.next(arglist__4100);
-    var sites = cljs.core.first(arglist__4100);
-    var p__4097 = cljs.core.rest(arglist__4100);
-    return initialize__delegate(user, sites, p__4097)
+  initialize.cljs$lang$applyTo = function(arglist__78616) {
+    var user = cljs.core.first(arglist__78616);
+    arglist__78616 = cljs.core.next(arglist__78616);
+    var sites = cljs.core.first(arglist__78616);
+    var p__78613 = cljs.core.rest(arglist__78616);
+    return initialize__delegate(user, sites, p__78613)
   };
   initialize.cljs$core$IFn$_invoke$arity$variadic = initialize__delegate;
   return initialize
@@ -30551,248 +30541,299 @@ goog.provide("sleuth.analytics");
 goog.require("cljs.core");
 goog.require("dommy.core");
 goog.require("sleuth.sites_persistence");
+goog.require("jayq.core");
 goog.require("sleuth.editable");
 goog.require("sleuth.xhr");
 goog.require("dommy.core");
+goog.require("jayq.core");
 goog.require("sleuth.sites_persistence");
 sleuth.analytics.list_template = function list_template(site) {
-  var dom8011 = document.createElement("div");
-  dom8011.className = "row analytics-list";
-  dom8011.appendChild(function() {
-    var dom8012 = document.createElement("div");
-    dom8012.className = "span12";
-    dom8012.appendChild(function() {
-      var dom8013 = document.createElement("a");
+  var dom94925 = document.createElement("div");
+  dom94925.className = "row analytics-list";
+  dom94925.appendChild(function() {
+    var dom94926 = document.createElement("div");
+    dom94926.className = "span12";
+    dom94926.appendChild(function() {
+      var dom94927 = document.createElement("a");
       if(cljs.core.truth_([cljs.core.str("#/analytics/"), cljs.core.str((new cljs.core.Keyword("\ufdd0:_id")).call(null, site))].join(""))) {
-        dom8013.setAttribute("href", [cljs.core.str("#/analytics/"), cljs.core.str((new cljs.core.Keyword("\ufdd0:_id")).call(null, site))].join(""))
+        dom94927.setAttribute("href", [cljs.core.str("#/analytics/"), cljs.core.str((new cljs.core.Keyword("\ufdd0:_id")).call(null, site))].join(""))
       }else {
       }
-      dom8013.appendChild(function() {
-        var dom8014 = document.createElement("h2");
-        dom8014.appendChild(dommy.template.__GT_node_like.call(null, (new cljs.core.Keyword("\ufdd0:name")).call(null, site)));
-        dom8014.appendChild(function() {
-          var dom8015 = document.createElement("small");
-          dom8015.appendChild(dommy.template.__GT_node_like.call(null, [cljs.core.str(" "), cljs.core.str((new cljs.core.Keyword("\ufdd0:url")).call(null, site))].join("")));
-          return dom8015
+      dom94927.appendChild(function() {
+        var dom94928 = document.createElement("h2");
+        dom94928.appendChild(dommy.template.__GT_node_like.call(null, (new cljs.core.Keyword("\ufdd0:name")).call(null, site)));
+        dom94928.appendChild(function() {
+          var dom94929 = document.createElement("small");
+          dom94929.appendChild(dommy.template.__GT_node_like.call(null, [cljs.core.str(" "), cljs.core.str((new cljs.core.Keyword("\ufdd0:url")).call(null, site))].join("")));
+          return dom94929
         }());
-        return dom8014
+        return dom94928
       }());
-      return dom8013
+      return dom94927
     }());
-    return dom8012
+    return dom94926
   }());
-  return dom8011
+  return dom94925
 };
 sleuth.analytics.render_list = function render_list(sites) {
-  var seq__8020 = cljs.core.seq.call(null, cljs.core.vals.call(null, sites));
-  var chunk__8021 = null;
-  var count__8022 = 0;
-  var i__8023 = 0;
-  while(true) {
-    if(i__8023 < count__8022) {
-      var site = cljs.core._nth.call(null, chunk__8021, i__8023);
-      dommy.core.append_BANG_.call(null, document.querySelector("#main.container"), sleuth.analytics.list_template.call(null, site));
-      var G__8024 = seq__8020;
-      var G__8025 = chunk__8021;
-      var G__8026 = count__8022;
-      var G__8027 = i__8023 + 1;
-      seq__8020 = G__8024;
-      chunk__8021 = G__8025;
-      count__8022 = G__8026;
-      i__8023 = G__8027;
-      continue
-    }else {
-      var temp__4092__auto__ = cljs.core.seq.call(null, seq__8020);
-      if(temp__4092__auto__) {
-        var seq__8020__$1 = temp__4092__auto__;
-        if(cljs.core.chunked_seq_QMARK_.call(null, seq__8020__$1)) {
-          var c__3073__auto__ = cljs.core.chunk_first.call(null, seq__8020__$1);
-          var G__8028 = cljs.core.chunk_rest.call(null, seq__8020__$1);
-          var G__8029 = c__3073__auto__;
-          var G__8030 = cljs.core.count.call(null, c__3073__auto__);
-          var G__8031 = 0;
-          seq__8020 = G__8028;
-          chunk__8021 = G__8029;
-          count__8022 = G__8030;
-          i__8023 = G__8031;
-          continue
-        }else {
-          var site = cljs.core.first.call(null, seq__8020__$1);
-          dommy.core.append_BANG_.call(null, document.querySelector("#main.container"), sleuth.analytics.list_template.call(null, site));
-          var G__8032 = cljs.core.next.call(null, seq__8020__$1);
-          var G__8033 = null;
-          var G__8034 = 0;
-          var G__8035 = 0;
-          seq__8020 = G__8032;
-          chunk__8021 = G__8033;
-          count__8022 = G__8034;
-          i__8023 = G__8035;
-          continue
-        }
-      }else {
-        return null
-      }
-    }
-    break
-  }
+  return cljs.core.apply.call(null, cljs.core.partial.call(null, dommy.core.append_BANG_, document.querySelector("#main.container")), cljs.core.map.call(null, sleuth.analytics.list_template, cljs.core.vals.call(null, sites)))
 };
 sleuth.analytics.list_all = function list_all(user, sites) {
   cljs.core.add_watch.call(null, sites, "\ufdd0:render", function(key, a, old_val, new_val) {
     return sleuth.analytics.render_list.call(null, new_val)
   });
-  if(cljs.core.empty_QMARK_.call(null, cljs.core.deref.call(null, sites))) {
-    sleuth.sites_persistence.fetch_BANG_.call(null, user, sites)
-  }else {
-  }
-  return sleuth.analytics.render_list.call(null, cljs.core.deref.call(null, sites))
+  return sleuth.sites_persistence.fetch_BANG_.call(null, user, sites)
 };
-sleuth.analytics.event_template = function event_template(event) {
-  var dom8037 = document.createElement("li");
-  dom8037.appendChild(dommy.template.__GT_node_like.call(null, [cljs.core.str((new cljs.core.Keyword("\ufdd0:type")).call(null, event)), cljs.core.str(cljs.core.truth_((new cljs.core.Keyword("\ufdd0:selector")).call(null, event)) ? [cljs.core.str(" on "), cljs.core.str((new cljs.core.Keyword("\ufdd0:selector-event")).call(null))].join("") : null)].join("")));
-  return dom8037
+sleuth.analytics.graph = function graph(title, data) {
+  return dommy.template.__GT_node_like.call(null, function() {
+    var data__$1 = cljs.core.into.call(null, cljs.core.ObjMap.EMPTY, cljs.core.map.call(null, function(p__94934) {
+      var vec__94935 = p__94934;
+      var k = cljs.core.nth.call(null, vec__94935, 0, null);
+      var v = cljs.core.nth.call(null, vec__94935, 1, null);
+      return cljs.core.PersistentVector.fromArray([k, cljs.core.count.call(null, v)], true)
+    }, data));
+    console.log(cljs.core.pr_str.call(null, data__$1));
+    return cljs.core.PersistentVector.fromArray(["\ufdd0:div.chart", cljs.core.PersistentVector.fromArray(["\ufdd0:h5", title], true), cljs.core.PersistentVector.fromArray(["\ufdd0:ul.analytics", cljs.core.map.call(null, function(p__94936) {
+      var vec__94937 = p__94936;
+      var key = cljs.core.nth.call(null, vec__94937, 0, null);
+      var value = cljs.core.nth.call(null, vec__94937, 1, null);
+      return cljs.core.PersistentVector.fromArray(["\ufdd0:li", cljs.core.PersistentVector.fromArray(["\ufdd0:label", [cljs.core.str(key), cljs.core.str(": ")].join(""), value], true)], true)
+    }, data__$1)], true)], true)
+  }())
 };
-sleuth.analytics.show_template = function show_template(site) {
-  var dom8053 = document.createElement("div");
-  dom8053.className = "site-analytics";
-  dom8053.appendChild(function() {
-    var dom8054 = document.createElement("div");
-    dom8054.className = "row";
-    dom8054.appendChild(function() {
-      var dom8055 = document.createElement("div");
-      dom8055.className = "span8 offset4";
-      dom8055.appendChild(function() {
-        var dom8056 = document.createElement("h2");
-        dom8056.appendChild(dommy.template.__GT_node_like.call(null, (new cljs.core.Keyword("\ufdd0:name")).call(null, site)));
-        return dom8056
-      }());
-      return dom8055
-    }());
-    return dom8054
+sleuth.analytics.show_analytics = function show_analytics(p__94938) {
+  var map__94943 = p__94938;
+  var map__94943__$1 = cljs.core.seq_QMARK_.call(null, map__94943) ? cljs.core.apply.call(null, cljs.core.hash_map, map__94943) : map__94943;
+  var type = cljs.core.get.call(null, map__94943__$1, "\ufdd0:type");
+  var selector = cljs.core.get.call(null, map__94943__$1, "\ufdd0:selector");
+  var vec__94944 = cljs.core.get.call(null, map__94943__$1, "\ufdd0:results");
+  var date = cljs.core.nth.call(null, vec__94944, 0, null);
+  var value = cljs.core.nth.call(null, vec__94944, 1, null);
+  var dom94945 = document.createElement("div");
+  dom94945.className = "charts";
+  dom94945.appendChild(function() {
+    var dom94946 = document.createElement("h4");
+    dom94946.appendChild(dommy.template.__GT_node_like.call(null, type));
+    dom94946.appendChild(dommy.template.__GT_node_like.call(null, cljs.core.truth_(selector) ? cljs.core.PersistentVector.fromArray(["\ufdd0:small", [cljs.core.str(" on "), cljs.core.str(selector)].join("")], true) : null));
+    return dom94946
   }());
-  dom8053.appendChild(function() {
-    var dom8057 = document.createElement("div");
-    dom8057.className = "row";
-    dom8057.appendChild(function() {
-      var dom8058 = document.createElement("div");
-      dom8058.className = "span4";
-      dom8058.appendChild(function() {
-        var dom8059 = document.createElement("ul");
-        dom8059.className = "events";
-        dom8059.appendChild(dommy.template.__GT_node_like.call(null, function() {
-          var seq__8060 = cljs.core.seq.call(null, (new cljs.core.Keyword("\ufdd0:events")).call(null, site));
-          var chunk__8061 = null;
-          var count__8062 = 0;
-          var i__8063 = 0;
-          while(true) {
-            if(i__8063 < count__8062) {
-              var event = cljs.core._nth.call(null, chunk__8061, i__8063);
-              sleuth.analytics.event_template.call(null, (new cljs.core.Keyword("\ufdd0:events")).call(null, site));
-              var G__8068 = seq__8060;
-              var G__8069 = chunk__8061;
-              var G__8070 = count__8062;
-              var G__8071 = i__8063 + 1;
-              seq__8060 = G__8068;
-              chunk__8061 = G__8069;
-              count__8062 = G__8070;
-              i__8063 = G__8071;
-              continue
-            }else {
-              var temp__4092__auto__ = cljs.core.seq.call(null, seq__8060);
-              if(temp__4092__auto__) {
-                var seq__8060__$1 = temp__4092__auto__;
-                if(cljs.core.chunked_seq_QMARK_.call(null, seq__8060__$1)) {
-                  var c__3073__auto__ = cljs.core.chunk_first.call(null, seq__8060__$1);
-                  var G__8072 = cljs.core.chunk_rest.call(null, seq__8060__$1);
-                  var G__8073 = c__3073__auto__;
-                  var G__8074 = cljs.core.count.call(null, c__3073__auto__);
-                  var G__8075 = 0;
-                  seq__8060 = G__8072;
-                  chunk__8061 = G__8073;
-                  count__8062 = G__8074;
-                  i__8063 = G__8075;
-                  continue
-                }else {
-                  var event = cljs.core.first.call(null, seq__8060__$1);
-                  sleuth.analytics.event_template.call(null, (new cljs.core.Keyword("\ufdd0:events")).call(null, site));
-                  var G__8076 = cljs.core.next.call(null, seq__8060__$1);
-                  var G__8077 = null;
-                  var G__8078 = 0;
-                  var G__8079 = 0;
-                  seq__8060 = G__8076;
-                  chunk__8061 = G__8077;
-                  count__8062 = G__8078;
-                  i__8063 = G__8079;
-                  continue
-                }
-              }else {
-                return null
-              }
-            }
-            break
-          }
-        }()));
-        return dom8059
-      }());
-      return dom8058
-    }());
-    dom8057.appendChild(function() {
-      var dom8064 = document.createElement("div");
-      dom8064.className = "span8";
-      dom8064.appendChild(function() {
-        var dom8065 = document.createElement("div");
-        dom8065.className = "create-query";
-        dom8065.appendChild(function() {
-          var dom8066 = document.createElement("button");
-          dom8066.className = "add-event";
-          dom8066.appendChild(document.createTextNode("Add Event Query"));
-          return dom8066
-        }());
-        return dom8065
-      }());
-      dom8064.appendChild(function() {
-        var dom8067 = document.createElement("div");
-        dom8067.className = "analytics";
-        dom8067.appendChild(document.createTextNode("analytics here"));
-        return dom8067
-      }());
-      return dom8064
-    }());
-    return dom8057
-  }());
-  return dom8053
+  dom94945.appendChild(dommy.template.__GT_node_like.call(null, sleuth.analytics.graph.call(null, "By Date", date)));
+  dom94945.appendChild(dommy.template.__GT_node_like.call(null, sleuth.analytics.graph.call(null, "By Value", value)));
+  return dom94945
 };
-sleuth.analytics.render_show = function render_show(site, ev_id) {
-  return dommy.core.replace_contents_BANG_.call(null, document.querySelector("#main.container"), sleuth.analytics.show_template.call(null, site))
-};
-sleuth.analytics.show = function() {
-  var show__delegate = function(user, sites, id, p__8080) {
-    var vec__8082 = p__8080;
-    var ev_id = cljs.core.nth.call(null, vec__8082, 0, null);
-    cljs.core.add_watch.call(null, sites, "\ufdd0:render", function(key, a, old_val, new_val) {
-      return sleuth.analytics.render_show.call(null, new_val.call(null, id), ev_id)
-    });
-    if(cljs.core.empty_QMARK_.call(null, cljs.core.deref.call(null, sites))) {
-      sleuth.sites_persistence.fetch_BANG_.call(null, user, sites)
+sleuth.analytics.event_template = function event_template(id, p__94947) {
+  var map__94951 = p__94947;
+  var map__94951__$1 = cljs.core.seq_QMARK_.call(null, map__94951) ? cljs.core.apply.call(null, cljs.core.hash_map, map__94951) : map__94951;
+  var selector = cljs.core.get.call(null, map__94951__$1, "\ufdd0:selector");
+  var type = cljs.core.get.call(null, map__94951__$1, "\ufdd0:type");
+  var _id = cljs.core.get.call(null, map__94951__$1, "\ufdd0:_id");
+  var dom94952 = document.createElement("li");
+  dom94952.appendChild(function() {
+    var dom94953 = document.createElement("a");
+    if(cljs.core.truth_([cljs.core.str("#/analytics/"), cljs.core.str(id), cljs.core.str("/event/"), cljs.core.str(_id)].join(""))) {
+      dom94953.setAttribute("href", [cljs.core.str("#/analytics/"), cljs.core.str(id), cljs.core.str("/event/"), cljs.core.str(_id)].join(""))
     }else {
     }
-    return sleuth.analytics.render_show.call(null, cljs.core.deref.call(null, sites).call(null, id), ev_id)
+    dom94953.appendChild(dommy.template.__GT_node_like.call(null, [cljs.core.str(type), cljs.core.str(!cljs.core.empty_QMARK_.call(null, selector) ? [cljs.core.str(" on "), cljs.core.str(selector)].join("") : null)].join("")));
+    return dom94953
+  }());
+  return dom94952
+};
+sleuth.analytics.show_template = function show_template(site) {
+  var dom94965 = document.createElement("div");
+  dom94965.className = "site-analytics";
+  dom94965.appendChild(function() {
+    var dom94966 = document.createElement("div");
+    dom94966.className = "row";
+    dom94966.appendChild(function() {
+      var dom94967 = document.createElement("div");
+      dom94967.className = "span8 offset4";
+      dom94967.appendChild(function() {
+        var dom94968 = document.createElement("h2");
+        dom94968.appendChild(dommy.template.__GT_node_like.call(null, (new cljs.core.Keyword("\ufdd0:name")).call(null, site)));
+        return dom94968
+      }());
+      return dom94967
+    }());
+    return dom94966
+  }());
+  dom94965.appendChild(function() {
+    var dom94969 = document.createElement("div");
+    dom94969.className = "row";
+    dom94969.appendChild(function() {
+      var dom94970 = document.createElement("div");
+      dom94970.className = "span4";
+      dom94970.appendChild(function() {
+        var dom94971 = document.createElement("ul");
+        dom94971.className = "events";
+        dom94971.appendChild(dommy.template.__GT_node_like.call(null, cljs.core.map.call(null, cljs.core.partial.call(null, sleuth.analytics.event_template, (new cljs.core.Keyword("\ufdd0:_id")).call(null, site)), (new cljs.core.Keyword("\ufdd0:site-events")).call(null, site))));
+        dom94971.appendChild(function() {
+          var dom94972 = document.createElement("li");
+          dom94972.appendChild(function() {
+            var dom94973 = document.createElement("a");
+            if(cljs.core.truth_([cljs.core.str("#/analytics/"), cljs.core.str((new cljs.core.Keyword("\ufdd0:_id")).call(null, site)), cljs.core.str("/event/new")].join(""))) {
+              dom94973.setAttribute("href", [cljs.core.str("#/analytics/"), cljs.core.str((new cljs.core.Keyword("\ufdd0:_id")).call(null, site)), cljs.core.str("/event/new")].join(""))
+            }else {
+            }
+            dom94973.appendChild(document.createTextNode("Add New Event"));
+            return dom94973
+          }());
+          return dom94972
+        }());
+        return dom94971
+      }());
+      return dom94970
+    }());
+    dom94969.appendChild(function() {
+      var dom94974 = document.createElement("div");
+      dom94974.className = "span8";
+      dom94974.appendChild(function() {
+        var dom94975 = document.createElement("div");
+        dom94975.className = "chart-box";
+        return dom94975
+      }());
+      return dom94974
+    }());
+    return dom94969
+  }());
+  return dom94965
+};
+sleuth.analytics.show_new = function show_new() {
+  var dom94984 = document.createElement("div");
+  dom94984.className = "new";
+  dom94984.appendChild(function() {
+    var dom94985 = document.createElement("h3");
+    dom94985.appendChild(document.createTextNode("Query for Event"));
+    return dom94985
+  }());
+  dom94984.appendChild(function() {
+    var dom94986 = document.createElement("label");
+    dom94986.appendChild(document.createTextNode("Type: "));
+    dom94986.appendChild(function() {
+      var dom94987 = document.createElement("input");
+      dom94987.className = "type";
+      if("text") {
+        dom94987.setAttribute("type", "text")
+      }else {
+      }
+      return dom94987
+    }());
+    return dom94986
+  }());
+  dom94984.appendChild(function() {
+    var dom94988 = document.createElement("label");
+    dom94988.appendChild(document.createTextNode("Selector: "));
+    dom94988.appendChild(function() {
+      var dom94989 = document.createElement("input");
+      dom94989.className = "selector";
+      if("text") {
+        dom94989.setAttribute("type", "text")
+      }else {
+      }
+      return dom94989
+    }());
+    return dom94988
+  }());
+  dom94984.appendChild(function() {
+    var dom94990 = document.createElement("button");
+    dom94990.className = "btn submit";
+    dom94990.appendChild(document.createTextNode("Submit"));
+    return dom94990
+  }());
+  return dom94984
+};
+sleuth.analytics.save_BANG_ = function save_BANG_(user, p__94992) {
+  var map__94994 = p__94992;
+  var map__94994__$1 = cljs.core.seq_QMARK_.call(null, map__94994) ? cljs.core.apply.call(null, cljs.core.hash_map, map__94994) : map__94994;
+  var id = cljs.core.get.call(null, map__94994__$1, "\ufdd0:_id");
+  return function(e) {
+    var data = cljs.core.PersistentArrayMap.fromArray(["\ufdd0:type", jayq.core.val.call(null, jayq.core.$.call(null, "\ufdd0:input.type")), "\ufdd0:selector", jayq.core.val.call(null, jayq.core.$.call(null, "\ufdd0:input.selector"))], true);
+    return sleuth.xhr.post.call(null, [cljs.core.str("/sites/"), cljs.core.str(id), cljs.core.str("/site-events")].join(""), data, cljs.core.deref.call(null, user), function(p1__94976_SHARP_) {
+      return location.hash = [cljs.core.str("#/analytics/"), cljs.core.str(id), cljs.core.str("/event/"), cljs.core.str((new cljs.core.Keyword("\ufdd0:_id")).call(null, p1__94976_SHARP_))].join("")
+    })
+  }
+};
+sleuth.analytics.render_analytics = function render_analytics(user, p__94995, p__94996) {
+  var map__94999 = p__94995;
+  var map__94999__$1 = cljs.core.seq_QMARK_.call(null, map__94999) ? cljs.core.apply.call(null, cljs.core.hash_map, map__94999) : map__94999;
+  var id = cljs.core.get.call(null, map__94999__$1, "\ufdd0:_id");
+  var map__95000 = p__94996;
+  var map__95000__$1 = cljs.core.seq_QMARK_.call(null, map__95000) ? cljs.core.apply.call(null, cljs.core.hash_map, map__95000) : map__95000;
+  var ev_id = cljs.core.get.call(null, map__95000__$1, "\ufdd0:_id");
+  var type = cljs.core.get.call(null, map__95000__$1, "\ufdd0:type");
+  var selector = cljs.core.get.call(null, map__95000__$1, "\ufdd0:selector");
+  return sleuth.xhr.get.call(null, [cljs.core.str("/sites/"), cljs.core.str(id), cljs.core.str("/site-events/"), cljs.core.str(ev_id)].join(""), cljs.core.deref.call(null, user), function(p1__94991_SHARP_) {
+    return dommy.core.replace_contents_BANG_.call(null, dommy.utils.__GT_Array.call(null, document.getElementsByClassName("chart-box"))[0], sleuth.analytics.show_analytics.call(null, p1__94991_SHARP_))
+  })
+};
+sleuth.analytics.render_new_analytics = function render_new_analytics(user, site) {
+  jayq.core.off.call(null, jayq.core.$.call(null, "\ufdd0:button.submit"), "click");
+  dommy.core.replace_BANG_.call(null, dommy.utils.__GT_Array.call(null, document.getElementsByClassName("chart-box"))[0], sleuth.analytics.show_new.call(null));
+  return jayq.core.on.call(null, jayq.core.$.call(null, "\ufdd0:button.submit"), "click", sleuth.analytics.save_BANG_.call(null, user, site))
+};
+sleuth.analytics.render_show = function() {
+  var render_show__delegate = function(user, site, p__95002) {
+    var vec__95004 = p__95002;
+    var ev_id = cljs.core.nth.call(null, vec__95004, 0, null);
+    dommy.core.replace_contents_BANG_.call(null, document.querySelector("#main.container"), sleuth.analytics.show_template.call(null, site));
+    if(function() {
+      var or__3943__auto__ = cljs.core._EQ_.call(null, ev_id, "new");
+      if(or__3943__auto__) {
+        return or__3943__auto__
+      }else {
+        return ev_id == null
+      }
+    }()) {
+      return sleuth.analytics.render_new_analytics.call(null, user, site)
+    }else {
+      return sleuth.analytics.render_analytics.call(null, user, site, cljs.core.first.call(null, cljs.core.filter.call(null, function(p1__95001_SHARP_) {
+        return cljs.core._EQ_.call(null, (new cljs.core.Keyword("\ufdd0:_id")).call(null, p1__95001_SHARP_), ev_id)
+      }, (new cljs.core.Keyword("\ufdd0:site-events")).call(null, site))))
+    }
+  };
+  var render_show = function(user, site, var_args) {
+    var p__95002 = null;
+    if(arguments.length > 2) {
+      p__95002 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
+    }
+    return render_show__delegate.call(this, user, site, p__95002)
+  };
+  render_show.cljs$lang$maxFixedArity = 2;
+  render_show.cljs$lang$applyTo = function(arglist__95005) {
+    var user = cljs.core.first(arglist__95005);
+    arglist__95005 = cljs.core.next(arglist__95005);
+    var site = cljs.core.first(arglist__95005);
+    var p__95002 = cljs.core.rest(arglist__95005);
+    return render_show__delegate(user, site, p__95002)
+  };
+  render_show.cljs$core$IFn$_invoke$arity$variadic = render_show__delegate;
+  return render_show
+}();
+sleuth.analytics.show = function() {
+  var show__delegate = function(user, sites, id, p__95006) {
+    var vec__95008 = p__95006;
+    var ev_id = cljs.core.nth.call(null, vec__95008, 0, null);
+    cljs.core.add_watch.call(null, sites, "\ufdd0:render", function(key, a, old_val, new_val) {
+      return sleuth.analytics.render_show.call(null, user, new_val.call(null, id), ev_id)
+    });
+    return sleuth.sites_persistence.fetch_BANG_.call(null, user, sites)
   };
   var show = function(user, sites, id, var_args) {
-    var p__8080 = null;
+    var p__95006 = null;
     if(arguments.length > 3) {
-      p__8080 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 3), 0)
+      p__95006 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 3), 0)
     }
-    return show__delegate.call(this, user, sites, id, p__8080)
+    return show__delegate.call(this, user, sites, id, p__95006)
   };
   show.cljs$lang$maxFixedArity = 3;
-  show.cljs$lang$applyTo = function(arglist__8083) {
-    var user = cljs.core.first(arglist__8083);
-    arglist__8083 = cljs.core.next(arglist__8083);
-    var sites = cljs.core.first(arglist__8083);
-    arglist__8083 = cljs.core.next(arglist__8083);
-    var id = cljs.core.first(arglist__8083);
-    var p__8080 = cljs.core.rest(arglist__8083);
-    return show__delegate(user, sites, id, p__8080)
+  show.cljs$lang$applyTo = function(arglist__95009) {
+    var user = cljs.core.first(arglist__95009);
+    arglist__95009 = cljs.core.next(arglist__95009);
+    var sites = cljs.core.first(arglist__95009);
+    arglist__95009 = cljs.core.next(arglist__95009);
+    var id = cljs.core.first(arglist__95009);
+    var p__95006 = cljs.core.rest(arglist__95009);
+    return show__delegate(user, sites, id, p__95006)
   };
   show.cljs$core$IFn$_invoke$arity$variadic = show__delegate;
   return show
@@ -30806,26 +30847,27 @@ goog.require("sleuth.sites");
 goog.require("sleuth.auth");
 goog.require("jayq.core");
 sleuth.main.clean_and_dispatch = function() {
-  var clean_and_dispatch__delegate = function(p__4082) {
-    var vec__4084 = p__4082;
-    var key = cljs.core.nth.call(null, vec__4084, 0, null);
-    var a = cljs.core.nth.call(null, vec__4084, 1, null);
-    var old_val = cljs.core.nth.call(null, vec__4084, 2, null);
-    var new_val = cljs.core.nth.call(null, vec__4084, 3, null);
+  var clean_and_dispatch__delegate = function(p__41922) {
+    var vec__41924 = p__41922;
+    var key = cljs.core.nth.call(null, vec__41924, 0, null);
+    var a = cljs.core.nth.call(null, vec__41924, 1, null);
+    var old_val = cljs.core.nth.call(null, vec__41924, 2, null);
+    var new_val = cljs.core.nth.call(null, vec__41924, 3, null);
+    console.log(location.hash);
     secretary.core.dispatch_BANG_.call(null, location.hash);
     return jayq.core.inner.call(null, jayq.core.$.call(null, "\ufdd0:#main.container"), "")
   };
   var clean_and_dispatch = function(var_args) {
-    var p__4082 = null;
+    var p__41922 = null;
     if(arguments.length > 0) {
-      p__4082 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 0), 0)
+      p__41922 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 0), 0)
     }
-    return clean_and_dispatch__delegate.call(this, p__4082)
+    return clean_and_dispatch__delegate.call(this, p__41922)
   };
   clean_and_dispatch.cljs$lang$maxFixedArity = 0;
-  clean_and_dispatch.cljs$lang$applyTo = function(arglist__4085) {
-    var p__4082 = cljs.core.seq(arglist__4085);
-    return clean_and_dispatch__delegate(p__4082)
+  clean_and_dispatch.cljs$lang$applyTo = function(arglist__41925) {
+    var p__41922 = cljs.core.seq(arglist__41925);
+    return clean_and_dispatch__delegate(p__41922)
   };
   clean_and_dispatch.cljs$core$IFn$_invoke$arity$variadic = clean_and_dispatch__delegate;
   return clean_and_dispatch
@@ -30835,31 +30877,31 @@ sleuth.main.initialize = function initialize() {
   sleuth.main.sites = cljs.core.atom.call(null, cljs.core.ObjMap.EMPTY);
   sleuth.auth.initialize.call(null, "\ufdd0:li.auth", sleuth.main.user);
   cljs.core.add_watch.call(null, sleuth.main.user, "\ufdd0:clean-and-dispatch", sleuth.main.clean_and_dispatch);
-  cljs.core.swap_BANG_.call(null, secretary.core._STAR_routes_STAR_, cljs.core.assoc, "#/sites", function(params__4076__auto__) {
-    var vec__4091 = params__4076__auto__;
+  cljs.core.swap_BANG_.call(null, secretary.core._STAR_routes_STAR_, cljs.core.assoc, "#/sites", function(params__4078__auto__) {
+    var vec__41931 = params__4078__auto__;
     return sleuth.sites.initialize.call(null, sleuth.main.user, sleuth.main.sites)
   });
-  cljs.core.swap_BANG_.call(null, secretary.core._STAR_routes_STAR_, cljs.core.assoc, "#/sites/:id", function(params__4076__auto__) {
-    var map__4092 = params__4076__auto__;
-    var map__4092__$1 = cljs.core.seq_QMARK_.call(null, map__4092) ? cljs.core.apply.call(null, cljs.core.hash_map, map__4092) : map__4092;
-    var id = cljs.core.get.call(null, map__4092__$1, "\ufdd0:id");
+  cljs.core.swap_BANG_.call(null, secretary.core._STAR_routes_STAR_, cljs.core.assoc, "#/sites/:id", function(params__4078__auto__) {
+    var map__41932 = params__4078__auto__;
+    var map__41932__$1 = cljs.core.seq_QMARK_.call(null, map__41932) ? cljs.core.apply.call(null, cljs.core.hash_map, map__41932) : map__41932;
+    var id = cljs.core.get.call(null, map__41932__$1, "\ufdd0:id");
     return sleuth.sites.initialize.call(null, sleuth.main.user, sleuth.main.sites, id)
   });
-  cljs.core.swap_BANG_.call(null, secretary.core._STAR_routes_STAR_, cljs.core.assoc, "#/analytics", function(params__4076__auto__) {
-    var vec__4093 = params__4076__auto__;
+  cljs.core.swap_BANG_.call(null, secretary.core._STAR_routes_STAR_, cljs.core.assoc, "#/analytics", function(params__4078__auto__) {
+    var vec__41933 = params__4078__auto__;
     return sleuth.analytics.list_all.call(null, sleuth.main.user, sleuth.main.sites)
   });
-  cljs.core.swap_BANG_.call(null, secretary.core._STAR_routes_STAR_, cljs.core.assoc, "#/analytics/:id", function(params__4076__auto__) {
-    var map__4094 = params__4076__auto__;
-    var map__4094__$1 = cljs.core.seq_QMARK_.call(null, map__4094) ? cljs.core.apply.call(null, cljs.core.hash_map, map__4094) : map__4094;
-    var id = cljs.core.get.call(null, map__4094__$1, "\ufdd0:id");
+  cljs.core.swap_BANG_.call(null, secretary.core._STAR_routes_STAR_, cljs.core.assoc, "#/analytics/:id", function(params__4078__auto__) {
+    var map__41934 = params__4078__auto__;
+    var map__41934__$1 = cljs.core.seq_QMARK_.call(null, map__41934) ? cljs.core.apply.call(null, cljs.core.hash_map, map__41934) : map__41934;
+    var id = cljs.core.get.call(null, map__41934__$1, "\ufdd0:id");
     return sleuth.analytics.show.call(null, sleuth.main.user, sleuth.main.sites, id)
   });
-  cljs.core.swap_BANG_.call(null, secretary.core._STAR_routes_STAR_, cljs.core.assoc, "#/analytics/:id/event/:ev-id", function(params__4076__auto__) {
-    var map__4095 = params__4076__auto__;
-    var map__4095__$1 = cljs.core.seq_QMARK_.call(null, map__4095) ? cljs.core.apply.call(null, cljs.core.hash_map, map__4095) : map__4095;
-    var ev_id = cljs.core.get.call(null, map__4095__$1, "\ufdd0:ev-id");
-    var id = cljs.core.get.call(null, map__4095__$1, "\ufdd0:id");
+  cljs.core.swap_BANG_.call(null, secretary.core._STAR_routes_STAR_, cljs.core.assoc, "#/analytics/:id/event/:ev-id", function(params__4078__auto__) {
+    var map__41935 = params__4078__auto__;
+    var map__41935__$1 = cljs.core.seq_QMARK_.call(null, map__41935) ? cljs.core.apply.call(null, cljs.core.hash_map, map__41935) : map__41935;
+    var ev_id = cljs.core.get.call(null, map__41935__$1, "\ufdd0:ev-id");
+    var id = cljs.core.get.call(null, map__41935__$1, "\ufdd0:id");
     return sleuth.analytics.show.call(null, sleuth.main.user, sleuth.main.sites, id, ev_id)
   });
   return jayq.core.on.call(null, jayq.core.$.call(null, window), "hashchange", sleuth.main.clean_and_dispatch)

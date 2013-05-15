@@ -52,8 +52,7 @@
   (add-watch sites :render
              (fn [key a old-val new-val]
                (render new-val (new-val id))))
-  (when (or (nil? id) (empty? @sites)) 
-    (fetch! user sites))
+  (fetch! user sites)
   (render @sites (@sites id))
   (off ($ :#main.container) "click" :button.delete-site)
   (on ($ :#main.container) "click" :button.delete-site (delete! user sites))

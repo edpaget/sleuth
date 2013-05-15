@@ -3,7 +3,7 @@
         sleuth.util
         [clojure.set :only [subset?]]
         [clojure.algo.generic.functor :only [fmap]]
-        [clojure.string :only [split]])
+        [clojure.string :only [split lower-case]])
   (:require [rotary.client :as db]
             [monger.collection :as mc]
             [clj-time.core :as t]
@@ -41,22 +41,24 @@
        (group-by #(case (first %)
                     \. :classes
                     \# :id
-                    "default" :tag))
+                    :tag))
        (fmap (fn [xs] (map #(if (or (= \. (first %)) (= \# (first %)))
-                              (apply str (rest %))) xs)))))
+                              (apply str (rest %))
+                              %) 
+                           xs)))))
 
 (defn- select
   "Predicate to filter based on stripped down css selectors"
   [selector]
-  (if-not (nil? selector) 
+  (if-not (empty? selector) 
     (let [{:keys [tag id classes]} (selector-to-map selector)
-          [sel-tag] tag
+          sel-tag (lower-case (first tag))
           [id] id
           classes (into #{} classes)]
       (fn [{:strs [tag id_name class-names]}]
-        (and (if sel-tag (= sel-tag tag) true)
+        (and (if sel-tag (= sel-tag (lower-case tag)) true)
              (if id (= id id_name) true)
-             (if classes (subset? class-names classes) true))))
+             (if (not (empty? classes)) (subset? class-names classes) true))))
     (fn [x] true)))
 
 (defn- event-date
@@ -103,7 +105,7 @@
     (apply (partial db/batch-write-item (cred)) (batch-create events))))
 
 (defn query
-  ([site start-date end-date type selector]
+  ([site type selector start-date end-date]
    (if (nil? start-date)
      (query site type selector)
      (when-let [events (->> (db/lazy-query (cred) "events" {"site-url" site} '("created_at" :<=> start-date end-date))

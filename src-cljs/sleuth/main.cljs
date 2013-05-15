@@ -8,7 +8,8 @@
 
 (defn clean-and-dispatch
   [& [key a old-val new-val]]
-  (do (secretary/dispatch! (.-hash js/location))
+  (do (.log js/console (.-hash js/location))
+    (secretary/dispatch! (.-hash js/location))
       (inner ($ :#main.container) "")))
 
 (defn initialize

@@ -1,20 +1,37 @@
 (ns sleuth.util
   (:require [clojure.string :as s]
-            [clojure.data.codec.base64 :as b64])
+            [clojure.data.codec.base64 :as b64]
+            [clj-time.format :as f])
   (:import [java.security MessageDigest]))
+
+(declare mongo-id-to-string)
+(declare datetime-to-string)
 
 (defn- convert-ids
   [[k v]]
   (cond (= :_id k) {k (.toString v)}
         (not (nil? (re-find #"-ids" (str k)))) {k (into [] (map #(.toString %) v))}
         (not (nil? (re-find #"-id" (str k)))) {k (.toString v)}
+        (vector? v) {k (mongo-id-to-string v)}
+        (seq? v) {k (mongo-id-to-string v)}
         true {k v}))
 
-(defn- mongo-id-to-string
-  [body]
-  (cond (map? body) (apply merge (map convert-ids body))
-        (seq? body) (map mongo-id-to-string body)
+(defn- convert-dates
+  [[k v]]
+  (cond (= "created_at" k) {k (f/unparse (f/formatters :rfc822) v)}
+        (vector? v) {k (datetime-to-string v)}
+        (seq? v) {k (datetime-to-string v)}
+        true {k v}))
+
+(defn- convert-objects-to-string
+  [conv body]
+  (cond (map? body) (apply merge (map conv body))
+        (seq? body) (map (partial convert-objects-to-string conv) body)
+        (vector? body) (map (partial convert-objects-to-string conv) body)
         true body))
+
+(def mongo-id-to-string (partial convert-objects-to-string convert-ids))
+(def datetime-to-string (partial convert-objects-to-string convert-dates))
 
 (defn respond-with-edn
   "Converts the body into edn and allows the 
@@ -81,4 +98,3 @@
             (handler req*))
           (not-authorized)))
       (handler req))))
-
