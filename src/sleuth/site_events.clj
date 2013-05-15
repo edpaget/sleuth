@@ -1,7 +1,8 @@
 (ns sleuth.site-events
   (:use compojure.core
         sleuth.util
-        monger.operators)
+        monger.operators
+        [org.httpkit.server :only [with-channel send!]])
   (:require [monger.collection :as mc]
             [monger.conversion :as mcv]
             [sleuth.events :as events])
@@ -43,10 +44,20 @@
     (mc/update "sites" {:_id (mcv/to-object-id site-id)} {$push {:site-events item}})
     (by-id site-id item-id)))
 
+(defn async-query-events
+  [req]
+  (with-channel req channel
+    (future
+      (let [site-id (get-in req [:params :id]) 
+            event-id (get-in req [:params :event-id])] 
+        (send! channel (-> (by-id site-id event-id)
+                           datetime-to-string
+                           respond-with-edn))))))
+
 (defroutes site-event-routes
   (GET "/" [id] (respond-with-edn (all-for-site id)))
   (POST "/" [id & params] (respond-with-edn (create! id params) 201))
-  (GET "/:event-id" [id event-id] (respond-with-edn (datetime-to-string (by-id id event-id))))
+  (GET "/:event-id" [] async-query-events)
   (PUT "/:event-id" [id event-id & params] (respond-with-edn (update! id params)))
   (DELETE "/:event-id" [id event-id] (do (delete id event-id) 
                                          (respond-with-edn nil 204))))

@@ -25,7 +25,6 @@
 
 (deftemplate graph [title data]
   (let [data (into {} (map (fn [[k v]] [k (count v)]) data))]
-    (.log js/console (pr-str data))
     [:div.chart
      [:h5 title]
      [:ul.analytics
