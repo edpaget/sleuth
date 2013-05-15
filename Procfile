@@ -1,1 +1,1 @@
-web: lein with-profile production run -m sleuth.handler $PORT
+web: lein with-profile production trampoline run -m sleuth.handler $PORT
