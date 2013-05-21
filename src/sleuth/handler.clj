@@ -3,7 +3,7 @@
         ring.middleware.edn
         ring.middleware.json
         sleuth.util
-        [org.httpkit.server :only [run-server]])
+        ring.adapter.jetty)
   (:require [compojure.handler :as handler]
             [compojure.route :as route]
             [sleuth.auth :as auth] 
@@ -43,5 +43,5 @@
   [& [port]]
   (init-db)
   (events/init-table)
-  (run-server app {:port (Integer. port)}))
+  (run-jetty app {:port (Integer. port)}))
 
