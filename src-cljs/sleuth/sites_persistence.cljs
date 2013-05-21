@@ -13,7 +13,8 @@
 (defn save!
   "Saves the active site to the api"
   [sites site user]
-  (if-let [id {:_id site}]
+  (.log js/console (pr-str site))
+  (if-let [id (:_id site)]
     (xhr/put (str "/sites/" id) site user 
              #(swap! sites assoc id %))
     (xhr/post "/sites" site user 
