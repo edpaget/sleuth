@@ -36,6 +36,9 @@
         throw new Error("Failed to Post to Server");
       }
     };
+    xhr.onerror = function(e) {
+      return e;
+    }
     if (parseInt(location.hash) > 1024) {
       url = "http://localhost:3000/events/";
     } else {
@@ -75,6 +78,7 @@
       class_name: e.target.className,
       position_x: e.clientX,
       position_y: e.clientY,
+      user_agent: navigator.userAgent,
       value: (e.target.value || "")
     };
     logEvent(event);
