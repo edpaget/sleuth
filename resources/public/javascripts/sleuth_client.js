@@ -66,7 +66,8 @@
     e.created_at = new Date();
     e.window_height = window.innerHeight;
     e.window_width = window.innerWidth;
-    e.path_name = location.pathname + location.hash
+    e.path_name = location.pathname + location.hash;
+    e.user_agent = navigator.userAgent;
     events.log.push(e);
   }
 
@@ -78,7 +79,6 @@
       class_name: e.target.className,
       position_x: e.clientX,
       position_y: e.clientY,
-      user_agent: navigator.userAgent,
       value: (e.target.value || "")
     };
     logEvent(event);
