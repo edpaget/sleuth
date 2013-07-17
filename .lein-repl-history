@@ -142,3 +142,14 @@ cred
 (formatter :rfc822)
 (formatters :rfc822)
 (into {} [[1 2] [2 3] [3 4]])
+(use '[rotary.client :only [describe-table]])
+(def cred {:access-key (get (System/getenv) "AMAZON_ACCESS_ID") :secret-key (get (System/getenv) "AMAZON_SECRET_ACCESS_KEY")})
+cred
+(def cred {:access-key (get (System/getenv) "AMAZON_ACCESS_ID") :secret-key (get (System/getenv) "AMAZON_SECRET_ACCESS_KEY")})
+(def cred {:access-key (get (System/getenv) "AMAZON_SECRET_ID") :secret-key (get (System/getenv) "AMAZON_SECRET_ACCESS_KEY")})
+cred
+(describe-table cred "events")
+(def cred {:access-key (get (System/getenv) "S3_ACCESS_ID") :secret-key (get (System/getenv) "S3_SECRET_KEY")})
+cre
+cred
+(describe-table cred "events")

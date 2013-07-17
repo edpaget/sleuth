@@ -3,8 +3,11 @@
   var session = sessionID();
   var user;
 
-  if (typeof zooniverse != 'undefined') {
-    user = zooniverse.models.User
+  if ((typeof zooniverse != 'undefined') &&
+      (typeof zooniverse.models != 'undefined')) {
+    user = zooniverse.models.User;
+  } else if (typeof window.User != 'undefined') {
+    user = window.User;
   } else if ((typeof require != 'undefined') && 
       (typeof define == 'undefined')) {
     try {
@@ -72,6 +75,7 @@
   }
 
   function logDomEvent(e) {
+    return if e.target.type === 'password'
     event = {
       type: e.type,
       tag: e.target.tagName,
