@@ -75,7 +75,8 @@
   }
 
   function logDomEvent(e) {
-    return if e.target.type === 'password'
+    if (e.target.type === 'password')
+      return;
     event = {
       type: e.type,
       tag: e.target.tagName,
